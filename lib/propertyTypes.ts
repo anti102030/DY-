@@ -1,0 +1,26 @@
+export type PropertyRow = {
+  id: number;
+  created_at: string;
+  title: string;
+  price: string;
+  address: string;
+  city: string;
+  district: string;
+  neighborhood: string;
+  property_type: string;
+  listing_badge: "신축분양" | "매매";
+  is_urgent: boolean;
+  rooms: number;
+  bathrooms: number;
+  area_pyeong: number | null;
+  floor: string;
+  direction: string;
+  maintenance_fee: string;
+  move_in_status: string;
+  description: string;
+  thumbnail_url: string;
+  image_urls: string[];
+  deposit: string;
+  loan: string;
+  status: "공개" | "숨김";
+};
