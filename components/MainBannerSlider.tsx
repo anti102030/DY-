@@ -15,12 +15,25 @@ const BANNERS = [
 
 const AUTOPLAY_DELAY = 4000;
 
-export default function MainBannerSlider() {
+type MainBannerSliderProps = {
+  showControls?: boolean;
+};
+
+export default function MainBannerSlider({
+  showControls = true,
+}: MainBannerSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   const moveNext = useCallback(() => {
     setActiveIndex((current) => (current + 1) % BANNERS.length);
+  }, []);
+
+  const movePrev = useCallback(() => {
+    setActiveIndex(
+      (current) =>
+        (current - 1 + BANNERS.length) % BANNERS.length
+    );
   }, []);
 
   useEffect(() => {
@@ -53,6 +66,86 @@ export default function MainBannerSlider() {
           </div>
         ))}
       </div>
+
+      {showControls && BANNERS.length > 1 && (
+        <div className="km-main-banner-controls">
+          <button
+            type="button"
+            onClick={movePrev}
+            aria-label="이전 배너"
+          >
+            ‹
+          </button>
+
+          <span>
+            {activeIndex + 1} / {BANNERS.length}
+          </span>
+
+          <button
+            type="button"
+            onClick={moveNext}
+            aria-label="다음 배너"
+          >
+            ›
+          </button>
+        </div>
+      )}
+
+      <style jsx>{`
+        .km-main-banner-slider {
+          position: relative;
+        }
+
+        .km-main-banner-controls {
+          position: absolute;
+          right: 12px;
+          bottom: 12px;
+
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          padding: 5px 8px;
+
+          border-radius: 20px;
+
+          background: rgba(0, 0, 0, 0.55);
+
+          color: #fff;
+
+          z-index: 5;
+        }
+
+        .km-main-banner-controls button {
+          width: 28px;
+          height: 28px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          border: 0;
+          border-radius: 50%;
+
+          background: rgba(255, 255, 255, 0.15);
+
+          color: #fff;
+
+          font-size: 20px;
+          line-height: 1;
+
+          cursor: pointer;
+        }
+
+        .km-main-banner-controls span {
+          min-width: 36px;
+
+          text-align: center;
+
+          font-size: 11px;
+          font-weight: 700;
+        }
+      `}</style>
     </section>
   );
 }
