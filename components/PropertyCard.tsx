@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Property } from "@/lib/homeData";
+import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 
 export default function PropertyCard({
   property,
@@ -18,20 +19,7 @@ export default function PropertyCard({
             className="property-image"
           />
         ) : (
-          <div
-            className="property-image"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#f3f3f3",
-              color: "#888888",
-              fontSize: "14px",
-              fontWeight: 600,
-            }}
-          >
-            사진 준비중
-          </div>
+          <NoImagePlaceholder className="property-image" />
         )}
       </div>
 
