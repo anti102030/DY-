@@ -10779,3 +10779,135 @@ body .km-related-alert > span{
     font-weight:700 !important;
     color:#111 !important;
 }
+/* =========================================================
+   2026-08-12 모바일 LIVE 영역 최종 보정
+   PC 화면 변경 없음
+   LIVE + 날짜시간 + n명 상담완료 모두 표시
+   ========================================================= */
+
+@media (max-width: 760px) {
+  body .dy-km-live-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 55px !important;
+
+    padding: 0 8px !important;
+
+    display: grid !important;
+    grid-template-columns: 42px minmax(0, 1fr) auto !important;
+
+    align-items: center !important;
+    gap: 6px !important;
+
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  body .dy-km-live-badge {
+    width: 38px !important;
+    height: 26px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    justify-self: start !important;
+
+    font-size: 10px !important;
+    line-height: 1 !important;
+
+    flex-shrink: 0 !important;
+  }
+
+  body .dy-km-live-box b {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+
+    color: #fff !important;
+
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+
+    text-align: center !important;
+
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  body .dy-km-completed-count {
+    width: auto !important;
+    min-width: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 2px !important;
+
+    justify-self: end !important;
+
+    white-space: nowrap !important;
+
+    font-size: 11px !important;
+    line-height: 1 !important;
+  }
+
+  body .dy-km-completed-number {
+    display: inline !important;
+
+    color: #fff200 !important;
+
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+  }
+
+  body .dy-km-completed-label {
+    display: inline !important;
+
+    color: #fff !important;
+
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+  }
+}
+
+
+/* 더 작은 휴대폰 */
+@media (max-width: 430px) {
+  body .dy-km-live-box {
+    grid-template-columns: 38px minmax(0, 1fr) auto !important;
+
+    gap: 4px !important;
+    padding: 0 6px !important;
+  }
+
+  body .dy-km-live-badge {
+    width: 35px !important;
+    height: 24px !important;
+
+    font-size: 9px !important;
+  }
+
+  body .dy-km-live-box b {
+    font-size: 9px !important;
+  }
+
+  body .dy-km-completed-count,
+  body .dy-km-completed-number,
+  body .dy-km-completed-label {
+    display: inline-flex !important;
+
+    font-size: 9px !important;
+  }
+}

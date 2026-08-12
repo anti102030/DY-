@@ -51,8 +51,32 @@ export default function ReviewsSection() {
   const [isPaused, setIsPaused] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  /* 모바일 여부 */
+  const [isMobile, setIsMobile] = useState(false);
+
   const timerRef = useRef<number | null>(null);
 
+  /*
+    모바일 화면 확인
+    760px 이하에서만 모바일 슬라이드 적용
+  */
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 760);
+    };
+
+    checkMobile();
+
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  /*
+    고객후기 불러오기
+  */
   useEffect(() => {
     async function loadReviews() {
       const { data, error } = await supabase
@@ -115,12 +139,16 @@ export default function ReviewsSection() {
       ? reviews
       : fallbackItems;
 
-  const canSlide =
-    reviews.length > VISIBLE_COUNT;
+  /*
+    PC에서는 기존처럼 5개보다 많을 때 슬라이드.
+    모바일에서는 1개보다 많으면 슬라이드.
+  */
+  const canSlide = isMobile
+    ? sourceItems.length > 1
+    : reviews.length > VISIBLE_COUNT;
 
   /*
-    무한슬라이드용 배열
-    실제 후기 뒤에 앞쪽 5개를 복제
+    무한 슬라이드용 배열
   */
   const sliderItems = useMemo(() => {
     if (!canSlide) {
@@ -131,12 +159,13 @@ export default function ReviewsSection() {
       ...sourceItems,
       ...sourceItems.slice(
         0,
-        VISIBLE_COUNT,
+        isMobile ? 1 : VISIBLE_COUNT,
       ),
     ];
   }, [
     canSlide,
     sourceItems,
+    isMobile,
   ]);
 
   /*
@@ -297,15 +326,17 @@ export default function ReviewsSection() {
           <div
             className="km-review-track"
             style={{
-              transform: `translateX(
-                calc(
-                  -${currentIndex} *
-                  (
-                    (100% - 48px) / 5
-                    + 12px
-                  )
-                )
-              )`,
+              transform: isMobile
+                ? `translateX(calc(-${currentIndex} * (100% + 10px)))`
+                : `translateX(
+                    calc(
+                      -${currentIndex} *
+                      (
+                        (100% - 48px) / 5
+                        + 12px
+                      )
+                    )
+                  )`,
 
               transition:
                 isAnimating
@@ -482,6 +513,7 @@ export default function ReviewsSection() {
         }
 
         /*
+          PC
           gap 12px
           5개 보이도록
         */
@@ -497,7 +529,7 @@ export default function ReviewsSection() {
         }
 
         /*
-          한 카드 폭 =
+          PC 카드 폭
           전체폭 - gap 4개
           나누기 5
         */
@@ -615,21 +647,17 @@ export default function ReviewsSection() {
 
         /*
           =========================
-          반응형
+          기존 태블릿
           =========================
         */
 
-        @media (
-          max-width: 1100px
-        ) {
+        @media (max-width: 1100px) {
           .km-review-card img {
             height: 145px;
           }
         }
 
-        @media (
-          max-width: 820px
-        ) {
+        @media (max-width: 820px) and (min-width: 761px) {
           .km-review-track {
             gap: 10px;
           }
@@ -656,45 +684,107 @@ export default function ReviewsSection() {
           }
         }
 
-        @media (
-          max-width: 520px
-        ) {
+        /*
+          =========================
+          모바일 전용
+          760px 이하
+          =========================
+        */
+
+        @media (max-width: 760px) {
+          .km-reviews {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+
+            overflow: hidden;
+
+            box-sizing: border-box;
+          }
+
+          .km-review-section-head {
+            width: 100%;
+
+            gap: 6px;
+
+            margin-bottom: 8px;
+          }
+
           .km-review-section-head h2 {
             font-size: 15px;
+
+            flex-shrink: 0;
+          }
+
+          .km-dot-line {
+            min-width: 10px;
           }
 
           .km-review-section-head > a {
-            min-width: 76px;
+            width: 66px;
+            min-width: 66px;
+            height: 27px;
+
+            font-size: 10px;
+
+            flex-shrink: 0;
+          }
+
+          .km-review-slider {
+            width: 100%;
+            max-width: 100%;
+
+            overflow: hidden;
+          }
+
+          .km-review-slider-viewport {
+            width: 100%;
+            max-width: 100%;
+
+            overflow: hidden;
           }
 
           .km-review-track {
-            gap: 8px;
+            width: 100%;
+
+            gap: 10px;
+
+            align-items: stretch;
           }
 
           .km-review-card {
-            width:
-              calc(
-                (
-                  100% - 8px
-                ) / 2
-              );
+            width: 100%;
+            min-width: 100%;
 
-            flex:
-              0 0
-              calc(
-                (
-                  100% - 8px
-                ) / 2
-              );
+            flex: 0 0 100%;
+
+            box-sizing: border-box;
           }
 
           .km-review-card img {
-            height: 140px;
+            width: 100%;
+            height: auto;
+
+            aspect-ratio: 500 / 340;
+
+            display: block;
+
+            object-fit: cover;
           }
 
           .km-review-arrow {
             width: 30px;
             height: 44px;
+
+            font-size: 24px;
+          }
+
+          .km-review-arrow-prev {
+            left: 0;
+          }
+
+          .km-review-arrow-next {
+            right: 0;
           }
         }
       `}</style>

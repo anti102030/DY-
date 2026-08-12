@@ -145,6 +145,70 @@ export default function MainBannerSlider({
           font-size: 11px;
           font-weight: 700;
         }
+
+        /* =========================
+           모바일 전용
+           PC 화면에는 영향 없음
+           ========================= */
+
+        @media (max-width: 760px) {
+          .km-main-banner-slider {
+            width: 100%;
+            max-width: 100%;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: hidden;
+            box-sizing: border-box;
+          }
+
+          .km-main-banner-track {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: auto !important;
+            min-height: 0 !important;
+          }
+
+          .km-main-banner-slide {
+            width: 100%;
+            max-width: 100%;
+            height: auto !important;
+            min-height: 0 !important;
+          }
+
+          .km-main-banner-slide img {
+            width: 100%;
+            max-width: 100%;
+            height: auto !important;
+
+            display: block;
+
+            object-fit: contain !important;
+            object-position: center;
+          }
+
+          .km-main-banner-controls {
+            right: 8px;
+            bottom: 8px;
+
+            gap: 4px;
+
+            padding: 3px 6px;
+          }
+
+          .km-main-banner-controls button {
+            width: 24px;
+            height: 24px;
+
+            font-size: 17px;
+          }
+
+          .km-main-banner-controls span {
+            min-width: 30px;
+
+            font-size: 10px;
+          }
+        }
       `}</style>
     </section>
   );
