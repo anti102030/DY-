@@ -1,11 +1,16 @@
 import Link from "next/link";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import ReviewsSection from "@/components/ReviewsSection";
+import QuickConsultCard from "@/components/QuickConsultCard";
 import Footer from "@/components/Footer";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import SearchPanel from "@/components/SearchPanel";
 import { supabase } from "@/lib/supabase";
 import type { PropertyRow } from "@/lib/propertyTypes";
-import InnerPageTop from "@/components/InnerPageTop";
+import BrandWatermark from "@/components/BrandWatermark";
+import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 import {
   seoulDistricts,
   gyeonggiCities,
@@ -38,7 +43,7 @@ type FilterHrefOptions = {
 
 const PAGE_SIZE = 10;
 const CONTACT_NUMBER = "010-8426-8616";
-const CONTACT_TEL = "01075854574";
+const CONTACT_TEL = "01084268616";
 const FALLBACK_IMAGE = "/images/property-placeholder.jpg";
 
 function getCityDisplayName(city?: string) {
@@ -356,15 +361,26 @@ export default async function ListingsPage({
 
   return (
     <>
-      <InnerPageTop />
+      <Header />
 
-      <main className="km-home-layout dy-listings-shell">
-        <aside className="km-home-left-column">
-          <LeftSidebar />
-        </aside>
+      <Hero />
 
-        <section className="km-home-center-column dy-listings-main">
-          <div className="km-home-search-wrap">
+      <section
+        className="dy-detail-review-row"
+        aria-label="고객후기 및 빠른 상담"
+      >
+        <div className="dy-detail-review-content">
+          <ReviewsSection />
+        </div>
+
+        <QuickConsultCard />
+      </section>
+
+      <div className="km-detail-shell">
+        <LeftSidebar />
+
+        <main className="km-detail-main">
+          <div className="km-listing-search-wrap">
             <SearchPanel />
           </div>
 
@@ -447,10 +463,8 @@ export default async function ListingsPage({
 
           <section className="km-listing-result-heading">
             <div>
-              {locationTitle && (
-                <span className="km-listing-kicker">{locationTitle}</span>
-              )}
-              <h1>{locationTitle ? resultTitle : "매물정보"}</h1>
+              <span className="km-listing-kicker">DY PROPERTY</span>
+              <h1>{resultTitle}</h1>
               <p>
                 총 <strong>{totalCount.toLocaleString("ko-KR")}</strong>개의
                 매물이 검색되었습니다.
@@ -481,10 +495,17 @@ export default async function ListingsPage({
                   className="km-listing-thumb"
                   aria-label={`${property.title} 상세보기`}
                 >
-                  <img
-                    src={property.thumbnail_url || FALLBACK_IMAGE}
-                    alt={property.title || "매물 이미지"}
-                  />
+                  {property.thumbnail_url?.trim() ? (
+                    <span className="dy-listing-photo-wrap">
+                      <img
+                        src={property.thumbnail_url}
+                        alt={property.title || "매물 이미지"}
+                      />
+                      <BrandWatermark className="dy-listing-watermark" />
+                    </span>
+                  ) : (
+                    <NoImagePlaceholder />
+                  )}
 
                   <span className="km-listing-image-number">
                     매물번호 {property.id}
@@ -632,55 +653,57 @@ export default async function ListingsPage({
               </Link>
             </nav>
           )}
-        </section>
+        </main>
 
-        <aside className="km-home-right-column">
-          <RightSidebar />
-        </aside>
-      </main>
+        <RightSidebar />
+      </div>
 
       <Footer />
 
       <style>{`
-        .dy-listings-shell {
-          align-items: start !important;
-          margin-top: 18px !important;
-          margin-bottom: 34px !important;
+        .km-listing-image {
+          position: relative;
+          overflow: hidden;
         }
 
-        .dy-listings-main {
+        .dy-listing-photo-wrap {
+          position: relative;
+          display: block;
           width: 100%;
-          min-width: 0;
+          height: 100%;
+          overflow: hidden;
         }
 
-        .dy-listings-main .km-home-search-wrap {
+        .dy-listing-photo-wrap > img {
+          display: block;
           width: 100%;
-          margin-bottom: 14px !important;
+          height: 100%;
+          object-fit: cover;
         }
 
-        @media (max-width: 1150px) {
-          .dy-listings-shell {
-            grid-template-columns: 210px minmax(0, 1fr) !important;
-          }
-
-          .dy-listings-shell .km-home-right-column {
-            display: none !important;
-          }
+        .dy-listing-photo-wrap .dy-listing-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 38%;
+          max-width: 210px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.34;
+          pointer-events: none;
+          user-select: none;
+          z-index: 3;
         }
 
-        @media (max-width: 820px) {
-          .dy-listings-shell {
-            width: calc(100% - 16px) !important;
-            grid-template-columns: 1fr !important;
-            margin-bottom: 24px !important;
-          }
-
-          .dy-listings-shell .km-home-left-column,
-          .dy-listings-shell .km-home-right-column {
-            display: none !important;
+        @media (max-width: 760px) {
+          .dy-listing-photo-wrap .dy-listing-watermark {
+            width: 42%;
+            opacity: 0.38;
           }
         }
       `}</style>
-    </>
+
+</>
   );
 }

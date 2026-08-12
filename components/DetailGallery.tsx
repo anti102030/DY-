@@ -167,12 +167,12 @@ export default function DetailGallery({ images, title }: Props) {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 58%;
-          max-width: 520px;
+          width: 38%;
+          max-width: 360px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.52;
+          opacity: 0.38;
           pointer-events: none;
           user-select: none;
           z-index: 7;
@@ -198,12 +198,12 @@ export default function DetailGallery({ images, title }: Props) {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 52%;
-          max-width: 620px;
+          width: 38%;
+          max-width: 420px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.46;
+          opacity: 0.36;
           pointer-events: none;
           user-select: none;
           z-index: 3;
@@ -211,13 +211,13 @@ export default function DetailGallery({ images, title }: Props) {
 
         @media (max-width: 760px) {
           :global(.dy-detail-photo-watermark) {
-            width: 66%;
-            opacity: 0.56;
+            width: 44%;
+            opacity: 0.42;
           }
 
           .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
-            width: 64%;
-            opacity: 0.50;
+            width: 44%;
+            opacity: 0.40;
           }
         }
       `}</style>

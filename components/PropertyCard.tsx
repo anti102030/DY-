@@ -39,12 +39,12 @@ export default function PropertyCard({
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 62%;
-          max-width: 340px;
+          width: 42%;
+          max-width: 230px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.40;
+          opacity: 0.34;
           pointer-events: none;
           user-select: none;
           z-index: 3;

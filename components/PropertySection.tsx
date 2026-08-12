@@ -106,12 +106,12 @@ export default function PropertySection({
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 64%;
-          max-width: 330px;
+          width: 42%;
+          max-width: 230px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.40;
+          opacity: 0.34;
           pointer-events: none;
           user-select: none;
           z-index: 3;
@@ -119,8 +119,8 @@ export default function PropertySection({
 
         @media (max-width: 760px) {
           .dy-section-photo-wrap .dy-section-card-watermark {
-            width: 68%;
-            opacity: 0.44;
+            width: 46%;
+            opacity: 0.38;
           }
         }
       `}</style>
