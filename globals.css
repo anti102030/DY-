@@ -10780,210 +10780,42 @@ body .km-related-alert > span{
     color:#111 !important;
 }
 
-/* =========================================================
-   2026-08-12 모바일 최종 정리
-   - PC 스타일 유지
-   - 홈 배너/고객후기 폭을 통합검색과 같은 모바일 여백으로 통일
-   - LIVE 날짜/상담완료 겹침 제거
-   ========================================================= */
 
+/* =========================================================
+   2026-08-12 모바일 홈 레이아웃 최종 정리
+   PC에는 영향 없음
+   ========================================================= */
 @media screen and (max-width: 760px) {
-  /* 홈 상단: 모바일 공통 폭 */
-  body .km-main-gift-banner,
-  body .km-main-banner-slider,
-  body .km-home-review-row,
-  body .km-home-search-wrap {
+  body .km-home-review-row {
+    width: calc(100% - 30px) !important;
+    max-width: calc(100% - 30px) !important;
+    margin: 18px auto 22px !important;
+    display: block !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  body .km-home-review-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body .km-home-quick-consult {
+    display: none !important;
+  }
+
+  body .km-home-layout {
     width: calc(100% - 30px) !important;
     max-width: calc(100% - 30px) !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    box-sizing: border-box !important;
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 
-  body .km-home-review-row {
-    display: block !important;
-    margin-top: 18px !important;
-    margin-bottom: 18px !important;
-  }
-
-  body .km-home-review-content,
-  body .km-home-quick-consult {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  body .km-home-quick-consult {
-    margin-top: 12px !important;
-  }
-
-  /* 고객후기 제목/슬라이더가 부모 폭을 넘지 않게 */
-  body .km-reviews,
-  body .km-review-slider,
-  body .km-review-slider-viewport,
-  body .km-review-section-head {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  body .km-review-section-head {
-    gap: 6px !important;
-    overflow: visible !important;
-  }
-
-  body .km-review-section-head h2 {
-    min-width: 0 !important;
-    font-size: 15px !important;
-    line-height: 1.2 !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-  }
-
-  body .km-review-section-head > a {
-    flex: 0 0 66px !important;
-    min-width: 66px !important;
-    width: 66px !important;
-  }
-
-  /* LIVE 상담현황: 이전 left/큰 글씨 강제값을 완전히 초기화 */
-  body .dy-km-status-board .dy-km-live-box {
-    position: relative !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 56px !important;
-    min-height: 56px !important;
-    padding: 0 8px !important;
-    display: grid !important;
-    grid-template-columns: 40px minmax(0, 1fr) 82px !important;
-    align-items: center !important;
-    column-gap: 4px !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  body .dy-km-status-board .dy-km-live-badge {
-    position: static !important;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    width: 37px !important;
-    height: 25px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    justify-self: start !important;
-    font-size: 8px !important;
-    line-height: 1 !important;
-    transform: none !important;
-    box-sizing: border-box !important;
-  }
-
-  body .dy-km-status-board .dy-km-live-box b,
-  body .dy-km-status-board .dy-km-live-box .dy-km-confirmed-text {
-    position: static !important;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-    overflow: hidden !important;
-    color: #fff !important;
-    font-size: 9px !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-    letter-spacing: -0.45px !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    text-overflow: clip !important;
-    transform: none !important;
-  }
-
-  body .dy-km-status-board .dy-km-completed-count {
-    position: static !important;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    width: 82px !important;
-    min-width: 82px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    justify-self: end !important;
-    gap: 1px !important;
-    overflow: hidden !important;
-    font-size: 9px !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-    transform: none !important;
-  }
-
-  body .dy-km-status-board .dy-km-completed-number,
-  body .dy-km-status-board .dy-km-completed-label {
-    position: static !important;
-    display: inline !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 9px !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-    transform: none !important;
-  }
-
-  body .dy-km-status-board .dy-km-completed-number {
-    color: #fff600 !important;
-  }
-
-  body .dy-km-status-board .dy-km-completed-label {
-    color: #fff !important;
-  }
-}
-
-@media screen and (max-width: 430px) {
-  body .km-main-gift-banner,
-  body .km-main-banner-slider,
-  body .km-home-review-row,
+  body .km-home-center-column,
   body .km-home-search-wrap {
-    width: calc(100% - 24px) !important;
-    max-width: calc(100% - 24px) !important;
-  }
-
-  body .dy-km-status-board .dy-km-live-box {
-    grid-template-columns: 36px minmax(0, 1fr) 76px !important;
-    column-gap: 3px !important;
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-  }
-
-  body .dy-km-status-board .dy-km-live-badge {
-    width: 33px !important;
-    height: 23px !important;
-    font-size: 7px !important;
-  }
-
-  body .dy-km-status-board .dy-km-live-box b,
-  body .dy-km-status-board .dy-km-live-box .dy-km-confirmed-text {
-    font-size: 7.5px !important;
-    letter-spacing: -0.55px !important;
-  }
-
-  body .dy-km-status-board .dy-km-completed-count {
-    width: 76px !important;
-    min-width: 76px !important;
-  }
-
-  body .dy-km-status-board .dy-km-completed-number,
-  body .dy-km-status-board .dy-km-completed-label {
-    font-size: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 }

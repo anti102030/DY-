@@ -350,17 +350,17 @@ export default async function PropertyDetailPage({
                 </b>
               </div>
 
-              <div className="dy-km-live-box">
-                <span className="dy-km-live-badge">LIVE</span>
+              <div className="dy26-live-box">
+                <span className="dy26-live-badge">LIVE</span>
 
-                <b className="dy-km-confirmed-text">{liveDate} 기준</b>
+                <b className="dy26-live-date">{liveDate} 기준</b>
 
-                <strong className="dy-km-completed-count">
-                  <span className="dy-km-completed-number">
+                <strong className="dy26-live-count">
+                  <span className="dy26-live-number">
                     {(completedConsultationCount ?? 0).toLocaleString()}명
                   </span>
 
-                  <span className="dy-km-completed-label">상담완료</span>
+                  <span className="dy26-live-label">상담완료</span>
                 </strong>
               </div>
             </div>
@@ -596,6 +596,122 @@ export default async function PropertyDetailPage({
               ))}
             </div>
           </section>
+
+          <style>{`
+            .dy26-live-box {
+              min-width: 0;
+              height: 59px;
+              padding: 0 13px;
+              display: grid;
+              grid-template-columns: 58px minmax(0, 1fr) 150px;
+              gap: 10px;
+              align-items: center;
+              overflow: hidden;
+              background: #bc8950;
+              color: #fff;
+              white-space: nowrap;
+              box-sizing: border-box;
+            }
+
+            .dy26-live-badge {
+              width: 48px;
+              height: 31px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border: 2px solid #fff;
+              border-radius: 9px;
+              color: #fff;
+              font-size: 12px;
+              font-weight: 900;
+              line-height: 1;
+              box-sizing: border-box;
+            }
+
+            .dy26-live-date {
+              min-width: 0;
+              margin: 0;
+              overflow: hidden;
+              color: #fff;
+              font-size: 17px;
+              font-weight: 900;
+              line-height: 1;
+              text-align: center;
+              text-overflow: clip;
+              white-space: nowrap;
+            }
+
+            .dy26-live-count {
+              min-width: 0;
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 2px;
+              font-size: 17px;
+              font-weight: 900;
+              line-height: 1;
+              white-space: nowrap;
+            }
+
+            .dy26-live-number {
+              color: #fff200;
+            }
+
+            .dy26-live-label {
+              color: #fff;
+            }
+
+            @media (max-width: 760px) {
+              .dy26-live-box {
+                width: 100%;
+                max-width: 100%;
+                height: 55px;
+                padding: 0 8px;
+                grid-template-columns: 42px minmax(0, 1fr) 96px;
+                gap: 5px;
+              }
+
+              .dy26-live-badge {
+                width: 38px;
+                height: 26px;
+                font-size: 9px;
+              }
+
+              .dy26-live-date {
+                font-size: 10px;
+                letter-spacing: -0.45px;
+              }
+
+              .dy26-live-count {
+                font-size: 10px;
+                gap: 1px;
+              }
+            }
+
+            @media (max-width: 430px) {
+              .dy26-live-box {
+                padding: 0 6px;
+                grid-template-columns: 38px minmax(0, 1fr) 82px;
+                gap: 3px;
+              }
+
+              .dy26-live-badge {
+                width: 35px;
+                height: 24px;
+                font-size: 8px;
+              }
+
+              .dy26-live-date {
+                font-size: 8px;
+                letter-spacing: -0.5px;
+              }
+
+              .dy26-live-count {
+                font-size: 9px;
+              }
+            }
+          `}</style>
+
     </PublicPageFrame>
   );
 }

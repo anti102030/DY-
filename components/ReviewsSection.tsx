@@ -98,7 +98,9 @@ export default function ReviewsSection() {
     [],
   );
 
-  const sourceItems = reviews.length > 0 ? reviews : fallbackItems;
+  const sourceItems =
+    reviews.length > 0 ? reviews : fallbackItems;
+
   const canSlide = isMobile
     ? sourceItems.length > 1
     : reviews.length > VISIBLE_COUNT;
@@ -108,7 +110,10 @@ export default function ReviewsSection() {
 
     return [
       ...sourceItems,
-      ...sourceItems.slice(0, isMobile ? 1 : VISIBLE_COUNT),
+      ...sourceItems.slice(
+        0,
+        isMobile ? 1 : VISIBLE_COUNT,
+      ),
     ];
   }, [canSlide, isMobile, sourceItems]);
 
@@ -137,7 +142,12 @@ export default function ReviewsSection() {
 
     setIsAnimating(true);
     setCurrentIndex((current) => current - 1);
-  }, [canSlide, currentIndex, isAnimating, sourceItems.length]);
+  }, [
+    canSlide,
+    currentIndex,
+    isAnimating,
+    sourceItems.length,
+  ]);
 
   function handleTransitionEnd() {
     if (!canSlide) return;
@@ -167,46 +177,59 @@ export default function ReviewsSection() {
 
   return (
     <section
-      className="km-reviews"
+      className="km-reviews dy26-reviews"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="km-review-section-head">
+      <div className="km-review-section-head dy26-review-head">
         <h2>
-          <strong>DY</strong> 다이아부동산 고객후기
+          <strong>DY</strong>{" "}
+          다이아부동산 고객후기
         </h2>
 
         <div className="km-dot-line" />
 
-        <Link href="/reviews">더보기 ＋</Link>
+        <Link href="/reviews">
+          더보기 ＋
+        </Link>
       </div>
 
-      <div className="km-review-slider">
-        <div className="km-review-slider-viewport">
+      <div className="km-review-slider dy26-review-slider">
+        <div className="km-review-slider-viewport dy26-review-viewport">
           <div
-            className="km-review-track"
+            className="km-review-track dy26-review-track"
             style={{
               transform: isMobile
-                ? `translateX(calc(-${currentIndex} * (100% + 10px)))`
+                ? `translateX(-${currentIndex * 100}%)`
                 : `translateX(calc(-${currentIndex} * (((100% - 48px) / 5) + 12px)))`,
-              transition: isAnimating
-                ? `transform ${TRANSITION_TIME}ms ease`
-                : "none",
+              transition:
+                isAnimating
+                  ? `transform ${TRANSITION_TIME}ms ease`
+                  : "none",
             }}
             onTransitionEnd={handleTransitionEnd}
           >
             {sliderItems.map((review, index) => {
               const isFallback = review.id < 0;
-              const image = review.thumbnail_url?.trim() || PLACEHOLDER;
+
+              const image =
+                review.thumbnail_url?.trim() ||
+                PLACEHOLDER;
 
               const card = (
-                <img src={image} alt={review.title || "고객후기"} />
+                <img
+                  src={image}
+                  alt={
+                    review.title ||
+                    "고객후기"
+                  }
+                />
               );
 
               if (isFallback) {
                 return (
                   <div
-                    className="km-review-card"
+                    className="km-review-card dy26-review-card"
                     key={`fallback-${index}`}
                   >
                     {card}
@@ -218,7 +241,7 @@ export default function ReviewsSection() {
                 <Link
                   key={`${review.id}-${index}`}
                   href={`/reviews/${review.id}`}
-                  className="km-review-card"
+                  className="km-review-card dy26-review-card"
                 >
                   {card}
                 </Link>
@@ -230,7 +253,7 @@ export default function ReviewsSection() {
         {canSlide && (
           <button
             type="button"
-            className="km-review-arrow km-review-arrow-prev"
+            className="km-review-arrow km-review-arrow-prev dy26-review-arrow dy26-review-prev"
             aria-label="이전 고객후기"
             onClick={movePrev}
           >
@@ -241,7 +264,7 @@ export default function ReviewsSection() {
         {canSlide && (
           <button
             type="button"
-            className="km-review-arrow km-review-arrow-next"
+            className="km-review-arrow km-review-arrow-next dy26-review-arrow dy26-review-next"
             aria-label="다음 고객후기"
             onClick={moveNext}
           >
@@ -251,12 +274,12 @@ export default function ReviewsSection() {
       </div>
 
       <style>{`
-        .km-reviews {
+        .dy26-reviews {
           width: 100%;
           box-sizing: border-box;
         }
 
-        .km-review-section-head {
+        .dy26-review-head {
           width: 100%;
           min-height: 40px;
           display: flex;
@@ -265,7 +288,7 @@ export default function ReviewsSection() {
           margin-bottom: 10px;
         }
 
-        .km-review-section-head h2 {
+        .dy26-review-head h2 {
           margin: 0;
           color: #111;
           font-size: 18px;
@@ -274,17 +297,18 @@ export default function ReviewsSection() {
           letter-spacing: -0.6px;
         }
 
-        .km-review-section-head h2 strong {
+        .dy26-review-head h2 strong {
           color: #e3a400;
         }
 
-        .km-dot-line {
+        .dy26-review-head .km-dot-line {
           flex: 1;
+          min-width: 0;
           height: 1px;
           border-top: 1px dotted #bbb;
         }
 
-        .km-review-section-head > a {
+        .dy26-review-head > a {
           min-width: 88px;
           height: 30px;
           display: inline-flex;
@@ -300,24 +324,24 @@ export default function ReviewsSection() {
           box-sizing: border-box;
         }
 
-        .km-review-slider {
+        .dy26-review-slider {
           position: relative;
           width: 100%;
         }
 
-        .km-review-slider-viewport {
+        .dy26-review-viewport {
           width: 100%;
           overflow: hidden;
         }
 
-        .km-review-track {
+        .dy26-review-track {
           display: flex;
           align-items: stretch;
           gap: 12px;
           will-change: transform;
         }
 
-        .km-review-card {
+        .dy26-review-card {
           width: calc((100% - 48px) / 5);
           flex: 0 0 calc((100% - 48px) / 5);
           display: block;
@@ -328,7 +352,7 @@ export default function ReviewsSection() {
           text-decoration: none;
         }
 
-        .km-review-card img {
+        .dy26-review-card img {
           width: 100%;
           height: 162px;
           display: block;
@@ -337,11 +361,11 @@ export default function ReviewsSection() {
           transition: transform 0.25s ease;
         }
 
-        .km-review-card:hover img {
+        .dy26-review-card:hover img {
           transform: scale(1.03);
         }
 
-        .km-review-arrow {
+        .dy26-review-arrow {
           position: absolute;
           top: 50%;
           width: 34px;
@@ -361,105 +385,100 @@ export default function ReviewsSection() {
           box-sizing: border-box;
         }
 
-        .km-review-arrow-prev {
+        .dy26-review-prev {
           left: 0;
         }
 
-        .km-review-arrow-next {
+        .dy26-review-next {
           right: 0;
         }
 
-        .km-review-arrow:hover {
-          background: #fff;
-        }
-
-        @media (max-width: 1100px) {
-          .km-review-card img {
+        @media (max-width: 1100px) and (min-width: 761px) {
+          .dy26-review-card img {
             height: 145px;
           }
         }
 
-        @media (max-width: 820px) and (min-width: 761px) {
-          .km-review-track {
-            gap: 10px;
+        @media (max-width: 760px) {
+          .dy26-reviews {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
           }
 
-          .km-review-card {
-            width: calc((100% - 20px) / 3);
-            flex: 0 0 calc((100% - 20px) / 3);
+          .dy26-review-head {
+            width: 100% !important;
+            gap: 7px !important;
+            margin-bottom: 10px !important;
           }
 
-          .km-review-card img {
-            height: 150px;
+          .dy26-review-head h2 {
+            min-width: 0 !important;
+            flex: 0 1 auto !important;
+            font-size: 16px !important;
+            letter-spacing: -0.8px !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+          }
+
+          .dy26-review-head .km-dot-line {
+            display: none !important;
+          }
+
+          .dy26-review-head > a {
+            margin-left: auto !important;
+            min-width: 72px !important;
+            height: 28px !important;
+            flex: 0 0 72px !important;
+            font-size: 10px !important;
+          }
+
+          .dy26-review-slider,
+          .dy26-review-viewport {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+          }
+
+          .dy26-review-track {
+            width: 100% !important;
+            gap: 0 !important;
+          }
+
+          .dy26-review-card {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            flex: 0 0 100% !important;
+            aspect-ratio: 16 / 9 !important;
+          }
+
+          .dy26-review-card img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            background: #f2f2f2 !important;
+          }
+
+          .dy26-review-arrow {
+            width: 34px !important;
+            height: 46px !important;
+            font-size: 25px !important;
           }
         }
 
-        @media (max-width: 760px) {
-          .km-reviews,
-          .km-review-slider,
-          .km-review-slider-viewport {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            box-sizing: border-box;
+        @media (max-width: 430px) {
+          .dy26-review-head h2 {
+            font-size: 15px !important;
           }
 
-          .km-reviews,
-          .km-review-slider,
-          .km-review-slider-viewport {
-            overflow: hidden;
-          }
-
-          .km-review-section-head {
-            gap: 6px;
-            margin-bottom: 8px;
-          }
-
-          .km-review-section-head h2 {
-            min-width: 0;
-            font-size: 15px;
-            line-height: 1.2;
-            white-space: nowrap;
-          }
-
-          .km-dot-line {
-            min-width: 8px;
-          }
-
-          .km-review-section-head > a {
-            width: 66px;
-            min-width: 66px;
-            height: 27px;
-            font-size: 10px;
-            flex-shrink: 0;
-          }
-
-          .km-review-track {
-            width: 100%;
-            gap: 10px;
-            align-items: stretch;
-          }
-
-          .km-review-card {
-            width: 100%;
-            min-width: 100%;
-            flex: 0 0 100%;
-            box-sizing: border-box;
-          }
-
-          .km-review-card img {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 500 / 340;
-            display: block;
-            object-fit: contain;
-            background: #f3f3f3;
-          }
-
-          .km-review-arrow {
-            width: 30px;
-            height: 44px;
-            font-size: 24px;
+          .dy26-review-head > a {
+            min-width: 66px !important;
+            flex-basis: 66px !important;
           }
         }
       `}</style>

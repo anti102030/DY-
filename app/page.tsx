@@ -663,6 +663,40 @@ export default async function Home({
           .dy-neighborhood-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
           }
+
+          .km-home-review-row {
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            grid-template-columns: 1fr;
+          }
+
+          .km-home-review-content {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+          }
+
+          .km-home-quick-consult {
+            display: none;
+          }
+
+          .km-home-layout {
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
+            margin-left: auto;
+            margin-right: auto;
+            grid-template-columns: minmax(0, 1fr);
+          }
+
+          .km-home-center-column,
+          .km-home-search-wrap {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+          }
         }
       `}</style>
     </>

@@ -31,7 +31,8 @@ export default function MainBannerSlider({
 
   const movePrev = useCallback(() => {
     setActiveIndex(
-      (current) => (current - 1 + BANNERS.length) % BANNERS.length,
+      (current) =>
+        (current - 1 + BANNERS.length) % BANNERS.length
     );
   }, []);
 
@@ -47,16 +48,16 @@ export default function MainBannerSlider({
 
   return (
     <section
-      className="km-main-gift-banner km-main-banner-slider"
+      className="km-main-gift-banner km-main-banner-slider dy26-main-banner"
       aria-label="프로모션 배너"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="km-main-banner-track">
+      <div className="km-main-banner-track dy26-main-banner-track">
         {BANNERS.map((banner, index) => (
           <div
             key={banner.src}
-            className={`km-main-banner-slide${
+            className={`km-main-banner-slide dy26-main-banner-slide${
               index === activeIndex ? " is-active" : ""
             }`}
             aria-hidden={index !== activeIndex}
@@ -67,8 +68,12 @@ export default function MainBannerSlider({
       </div>
 
       {showControls && BANNERS.length > 1 && (
-        <div className="km-main-banner-controls">
-          <button type="button" onClick={movePrev} aria-label="이전 배너">
+        <div className="km-main-banner-controls dy26-main-banner-controls">
+          <button
+            type="button"
+            onClick={movePrev}
+            aria-label="이전 배너"
+          >
             ‹
           </button>
 
@@ -76,18 +81,22 @@ export default function MainBannerSlider({
             {activeIndex + 1} / {BANNERS.length}
           </span>
 
-          <button type="button" onClick={moveNext} aria-label="다음 배너">
+          <button
+            type="button"
+            onClick={moveNext}
+            aria-label="다음 배너"
+          >
             ›
           </button>
         </div>
       )}
 
       <style jsx>{`
-        .km-main-banner-slider {
+        .dy26-main-banner {
           position: relative;
         }
 
-        .km-main-banner-controls {
+        .dy26-main-banner-controls {
           position: absolute;
           right: 12px;
           bottom: 12px;
@@ -101,7 +110,7 @@ export default function MainBannerSlider({
           z-index: 5;
         }
 
-        .km-main-banner-controls button {
+        .dy26-main-banner-controls button {
           width: 28px;
           height: 28px;
           display: flex;
@@ -116,7 +125,7 @@ export default function MainBannerSlider({
           cursor: pointer;
         }
 
-        .km-main-banner-controls span {
+        .dy26-main-banner-controls span {
           min-width: 36px;
           text-align: center;
           font-size: 11px;
@@ -124,61 +133,67 @@ export default function MainBannerSlider({
         }
 
         @media (max-width: 760px) {
-          .km-main-banner-slider {
-            width: calc(100% - 30px);
-            max-width: calc(100% - 30px);
-            margin: 14px auto 18px;
-            overflow: hidden;
-            box-sizing: border-box;
-            background: #fff;
+          .dy26-main-banner {
+            width: calc(100% - 30px) !important;
+            max-width: calc(100% - 30px) !important;
+            height: auto !important;
+            min-height: 0 !important;
+            margin: 16px auto 22px !important;
+            overflow: hidden !important;
+            background: #fff !important;
+            box-sizing: border-box !important;
           }
 
-          .km-main-banner-track {
-            position: relative;
-            width: 100%;
+          .dy26-main-banner-track {
+            position: relative !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
           }
 
-          .km-main-banner-slide {
-            display: none;
-            width: 100%;
+          .dy26-main-banner-slide {
+            position: static !important;
+            display: none !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
           }
 
-          .km-main-banner-slide.is-active {
-            display: block;
+          .dy26-main-banner-slide.is-active {
+            display: block !important;
           }
 
-          .km-main-banner-slide img {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-            display: block;
-            object-fit: contain;
-            object-position: center;
+          .dy26-main-banner-slide img {
+            position: static !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            display: block !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            transform: none !important;
           }
 
-          .km-main-banner-controls {
-            right: 7px;
-            bottom: 7px;
-            gap: 3px;
-            padding: 3px 5px;
+          .dy26-main-banner-controls {
+            right: 7px !important;
+            bottom: 7px !important;
+            gap: 3px !important;
+            padding: 3px 5px !important;
           }
 
-          .km-main-banner-controls button {
-            width: 23px;
-            height: 23px;
-            font-size: 16px;
+          .dy26-main-banner-controls button {
+            width: 23px !important;
+            height: 23px !important;
+            font-size: 16px !important;
           }
 
-          .km-main-banner-controls span {
-            min-width: 28px;
-            font-size: 9px;
-          }
-        }
-
-        @media (max-width: 430px) {
-          .km-main-banner-slider {
-            width: calc(100% - 24px);
-            max-width: calc(100% - 24px);
+          .dy26-main-banner-controls span {
+            min-width: 28px !important;
+            font-size: 9px !important;
           }
         }
       `}</style>
