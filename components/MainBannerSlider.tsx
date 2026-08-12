@@ -85,33 +85,43 @@ export default function MainBannerSlider({
             width: 100% !important;
             height: auto !important;
             min-height: 0 !important;
+            aspect-ratio: 16 / 9 !important;
+            overflow: hidden !important;
+            background: #fff !important;
           }
 
           .dy26-main-banner-slide {
-            position: static !important;
+            position: absolute !important;
+            inset: 0 !important;
             display: none !important;
             width: 100% !important;
-            height: auto !important;
+            height: 100% !important;
             min-height: 0 !important;
             opacity: 1 !important;
             visibility: visible !important;
             transform: none !important;
+            overflow: hidden !important;
+            background: #fff !important;
           }
 
           .dy26-main-banner-slide.is-active {
-            display: block !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
           }
 
           .dy26-main-banner-slide img {
             position: static !important;
             width: 100% !important;
             max-width: 100% !important;
-            height: auto !important;
+            height: 100% !important;
+            max-height: 100% !important;
             min-height: 0 !important;
             display: block !important;
             object-fit: contain !important;
-            object-position: center !important;
+            object-position: center center !important;
             transform: none !important;
+            margin: 0 auto !important;
           }
 
         }

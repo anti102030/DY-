@@ -1,704 +1,717 @@
 import Link from "next/link";
-import Header from "@/components/Header";
-import MainBannerSlider from "@/components/MainBannerSlider";
-import ReviewsSection from "@/components/ReviewsSection";
-import QuickConsultCard from "@/components/QuickConsultCard";
-import LeftSidebar from "@/components/LeftSidebar";
+import { notFound } from "next/navigation";
 import SearchPanel from "@/components/SearchPanel";
-import PropertySection from "@/components/PropertySection";
-import RightSidebar from "@/components/RightSidebar";
-import Footer from "@/components/Footer";
+import DetailGallery from "@/components/DetailGallery";
+import DetailConsultForm from "@/components/DetailConsultForm";
+import PrintButton from "@/components/PrintButton";
+import RecentViewedTracker from "@/components/RecentViewedTracker";
+import ConsultationTicker from "@/components/ConsultationTicker";
+import PublicPageFrame from "@/components/PublicPageFrame";
+import DetailActionModal from "@/components/DetailActionModal";
 import { supabase } from "@/lib/supabase";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { getNeighborhoods } from "@/lib/regionNeighborhoods";
 import type { PropertyRow } from "@/lib/propertyTypes";
-import type { Property } from "@/lib/homeData";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const HOME_LIMIT = 6;
-const FILTER_LIMIT = 30;
-
-type HomeSearchParams = {
-  city?: string;
-  district?: string;
-  neighborhood?: string;
-  deposit?: string;
-  deposit_max?: string;
-  property_type?: string;
-  rooms_group?: string;
-  feature?: string;
+type ConsultationRow = {
+  id: number;
+  phone: string | null;
+  region: string | null;
+  created_at: string | null;
 };
 
-type PageSetting = {
-  page_key: string;
-  title: string | null;
-  description: string | null;
-  is_visible: boolean;
-};
+const NO_IMAGE_PLACEHOLDER =
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+      <rect width="1200" height="800" fill="#f3f3f3"/>
+      <text
+        x="600"
+        y="400"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        fill="#888888"
+        font-family="Arial, sans-serif"
+        font-size="52"
+        font-weight="700"
+      >
+        사진 준비중
+      </text>
+    </svg>
+  `);
 
-const CITY_LABELS: Record<string, string> = {
-  서울: "서울특별시",
-  경기: "경기도",
-  인천: "인천광역시",
-};
+function formatDate(value?: string) {
+  if (!value) return "-";
 
-function toProperty(row: PropertyRow): Property {
-  return {
-    id: row.id,
-    createdAt: row.created_at,
-    title: row.title || "제목 미입력",
-    image: row.thumbnail_url || "",
-    location:
-      row.neighborhood || row.district || row.city || "지역 미입력",
-    address: row.address || "",
-    city: row.city || "",
-    district: row.district || "",
-    neighborhood: row.neighborhood || "",
-    price: row.price || "-",
-    deposit: row.deposit || "-",
-    loan: row.loan || "-",
-    rooms: row.rooms,
-    bathrooms: row.bathrooms,
-    areaPyeong: row.area_pyeong,
-    listingBadge: row.listing_badge || "신축분양",
-  };
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(new Date(value))
+    .replaceAll(". ", "-")
+    .replace(".", "");
 }
 
-async function getByCity(city: string): Promise<Property[]> {
-  const { data, error } = await supabase
-    .from("properties")
-    .select("*")
-    .eq("status", "공개")
-    .eq("city", city)
-    .order("id", { ascending: false })
-    .limit(HOME_LIMIT);
+function formatDateTime(value?: string | null) {
+  if (!value) return "-";
 
-  if (error) {
-    console.error(`[홈] ${city} 매물 불러오기 오류:`, error);
-    return [];
-  }
-
-  return ((data ?? []) as PropertyRow[]).map(toProperty);
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  })
+    .format(new Date(value))
+    .replaceAll(". ", "-")
+    .replace(".", "");
 }
 
-async function getByRegion(
-  city: string,
-  district?: string,
-  neighborhood?: string,
-): Promise<Property[]> {
-  let query = supabase
-    .from("properties")
-    .select("*")
-    .eq("status", "공개")
-    .eq("city", city);
+function maskPhone(value?: string | null) {
+  if (!value) return "010-XXXX-XXXX";
 
-  if (district) {
-    query = query.eq("district", district);
+  const digits = value.replace(/\D/g, "");
+
+  if (digits.length >= 11) {
+    return `${digits.slice(0, 3)}-XXXX-${digits.slice(-4)}`;
   }
 
-  if (neighborhood) {
-    query = query.eq("neighborhood", neighborhood);
-  }
-
-  const { data, error } = await query
-    .order("id", { ascending: false })
-    .limit(FILTER_LIMIT);
-
-  if (error) {
-    console.error(
-      `[홈 지역필터] ${city} ${district ?? ""} ${neighborhood ?? ""} 매물 불러오기 오류:`,
-      error,
-    );
-    return [];
-  }
-
-  return ((data ?? []) as PropertyRow[]).map(toProperty);
+  return "010-XXXX-XXXX";
 }
 
-async function getLowDeposit(): Promise<Property[]> {
-  const { data, error } = await supabase
-    .from("properties")
-    .select("*")
-    .eq("status", "공개")
-    .not("deposit", "is", null)
-    .neq("deposit", "")
-    .order("id", { ascending: false })
-    .limit(HOME_LIMIT);
+function QuickBellIcon() {
+  return (
+    <svg
+      className="km-detail-alert-bell-svg"
+      viewBox="0 0 120 120"
+      aria-hidden="true"
+    >
+      <path
+        d="M34 77V49c0-18 11-31 26-31s26 13 26 31v28l10 12H24l10-12Z"
+        fill="none"
+        stroke="#444"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
 
-  if (error) {
-    console.error("[홈] 낮은 실입주금 매물 불러오기 오류:", error);
-    return [];
-  }
+      <path
+        d="M50 91c2 8 7 12 10 12s8-4 10-12"
+        fill="none"
+        stroke="#444"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
 
-  return ((data ?? []) as PropertyRow[]).map(toProperty);
-}
+      <path
+        d="M83 22c8 5 13 12 15 21"
+        fill="none"
+        stroke="#f28c20"
+        strokeWidth="6"
+        strokeLinecap="round"
+      />
 
-function parseKoreanMoney(value?: string | null): number | null {
-  if (value === null || value === undefined) return null;
-
-  const normalized = String(value)
-    .replace(/,/g, "")
-    .replace(/\s+/g, "")
-    .trim();
-
-  if (!normalized) return null;
-
-  if (
-    normalized === "0" ||
-    normalized === "0원" ||
-    normalized.includes("무입주금") ||
-    normalized.includes("입주금없음")
-  ) {
-    return 0;
-  }
-
-  let total = 0;
-  let matched = false;
-
-  const eokMatch = normalized.match(/(\d+(?:\.\d+)?)억/);
-  if (eokMatch) {
-    total += Number(eokMatch[1]) * 10000;
-    matched = true;
-  }
-
-  const manMatch = normalized.match(/(\d+(?:\.\d+)?)만/);
-  if (manMatch) {
-    total += Number(manMatch[1]);
-    matched = true;
-  }
-
-  if (matched) return total;
-
-  const plainNumber = normalized.match(/\d+(?:\.\d+)?/);
-  if (!plainNumber) return null;
-
-  return Number(plainNumber[0]);
-}
-
-function matchesPropertyType(
-  row: PropertyRow,
-  propertyType?: string,
-): boolean {
-  if (!propertyType) return true;
-
-  const searchableText = [
-    row.property_type,
-    row.title,
-    row.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  return searchableText.includes(propertyType.toLowerCase());
-}
-
-function matchesFeature(
-  row: PropertyRow,
-  feature?: string,
-): boolean {
-  if (!feature) return true;
-
-  const searchableText = [
-    row.property_type,
-    row.title,
-    row.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (feature === "테라스복층") {
-    return (
-      searchableText.includes("테라스") ||
-      searchableText.includes("복층")
-    );
-  }
-
-  return searchableText.includes(feature.toLowerCase());
-}
-
-function matchesRoomGroup(
-  row: PropertyRow,
-  roomsGroup?: string,
-): boolean {
-  if (!roomsGroup) return true;
-
-  const roomCount = Number(row.rooms);
-
-  if (!Number.isFinite(roomCount)) return false;
-
-  if (roomsGroup === "1-2") {
-    return roomCount >= 1 && roomCount <= 2;
-  }
-
-  if (roomsGroup === "3-4") {
-    return roomCount >= 3 && roomCount <= 4;
-  }
-
-  return true;
-}
-
-async function getBySideFilter({
-  deposit,
-  depositMax,
-  propertyType,
-  roomsGroup,
-  feature,
-}: {
-  deposit?: string;
-  depositMax?: string;
-  propertyType?: string;
-  roomsGroup?: string;
-  feature?: string;
-}): Promise<Property[]> {
-  let query = supabase
-    .from("properties")
-    .select("*")
-    .eq("status", "공개");
-
-  if (feature === "급매물") {
-    query = query.eq("is_urgent", true);
-  }
-
-  const { data, error } = await query
-    .order("id", { ascending: false })
-    .limit(300);
-
-  if (error) {
-    console.error("[홈 사이드 필터] 매물 불러오기 오류:", error);
-    return [];
-  }
-
-  const depositMaximum = depositMax
-    ? Number(depositMax)
-    : null;
-
-  const filteredRows = ((data ?? []) as PropertyRow[]).filter(
-    (row) => {
-      const depositAmount = parseKoreanMoney(row.deposit);
-
-      if (deposit === "0" && depositAmount !== 0) {
-        return false;
-      }
-
-      if (
-        depositMaximum !== null &&
-        (!Number.isFinite(depositAmount) ||
-          depositAmount === null ||
-          depositAmount > depositMaximum)
-      ) {
-        return false;
-      }
-
-      if (!matchesRoomGroup(row, roomsGroup)) {
-        return false;
-      }
-
-      if (!matchesPropertyType(row, propertyType)) {
-        return false;
-      }
-
-      if (
-        feature !== "급매물" &&
-        !matchesFeature(row, feature)
-      ) {
-        return false;
-      }
-
-      return true;
-    },
-  );
-
-  return filteredRows.slice(0, FILTER_LIMIT).map(toProperty);
-}
-
-async function getPageSettings(): Promise<Record<string, PageSetting>> {
-  const { data, error } = await supabaseAdmin
-    .from("page_settings")
-    .select("page_key, title, description, is_visible");
-
-  if (error) {
-    console.error(
-      "[홈] page_settings 불러오기 실패:",
-      error.message,
-    );
-
-    return {};
-  }
-
-  const settings = (data ?? []) as PageSetting[];
-
-  console.log("[홈] page_settings:", settings);
-
-  return Object.fromEntries(
-    settings.map((item) => [
-      item.page_key,
-      item,
-    ]),
+      <path
+        d="M91 14c11 7 18 17 21 30"
+        fill="none"
+        stroke="#f28c20"
+        strokeWidth="6"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
-function pageTitle(
-  settings: Record<string, PageSetting>,
-  key: string,
-  fallback: string,
-) {
-  return settings[key]?.title?.trim() || fallback;
+
+function RelatedBellIcon() {
+  return (
+    <svg
+      className="km-related-alert-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M12 22a2.55 2.55 0 0 0 2.45-1.8h-4.9A2.55 2.55 0 0 0 12 22Zm7-5.4-1.65-2.02V9.5a5.35 5.35 0 0 0-4.35-5.26V3.5a1 1 0 1 0-2 0v.74A5.35 5.35 0 0 0 6.65 9.5v5.08L5 16.6a1 1 0 0 0 .77 1.64h12.46A1 1 0 0 0 19 16.6Z"
+      />
+    </svg>
+  );
 }
 
-function pageVisible(
-  settings: Record<string, PageSetting>,
-  key: string,
-) {
-  return settings[key]?.is_visible !== false;
-}
-
-export default async function Home({
-  searchParams,
+function InfoRow({
+  leftLabel,
+  leftValue,
+  rightLabel,
+  rightValue,
 }: {
-  searchParams?: Promise<HomeSearchParams>;
+  leftLabel: string;
+  leftValue: React.ReactNode;
+  rightLabel: string;
+  rightValue: React.ReactNode;
 }) {
-  const resolvedSearchParams = searchParams ? await searchParams : {};
-
-  const pageSettings = await getPageSettings();
-
-  const selectedCity = resolvedSearchParams.city?.trim() || "";
-  const selectedDistrict = resolvedSearchParams.district?.trim() || "";
-  const selectedNeighborhood =
-    resolvedSearchParams.neighborhood?.trim() || "";
-
-  const selectedDeposit =
-    resolvedSearchParams.deposit?.trim() || "";
-  const selectedDepositMax =
-    resolvedSearchParams.deposit_max?.trim() || "";
-  const selectedPropertyType =
-    resolvedSearchParams.property_type?.trim() || "";
-  const selectedRoomsGroup =
-    resolvedSearchParams.rooms_group?.trim() || "";
-  const selectedFeature =
-    resolvedSearchParams.feature?.trim() || "";
-
-  const hasRegionFilter = Boolean(selectedCity);
-  const hasSideFilter = Boolean(
-    selectedDeposit ||
-      selectedDepositMax ||
-      selectedPropertyType ||
-      selectedRoomsGroup ||
-      selectedFeature,
+  return (
+    <div className="km-detail-info-row">
+      <strong>{leftLabel}</strong>
+      <span>{leftValue || "-"}</span>
+      <strong>{rightLabel}</strong>
+      <span>{rightValue || "-"}</span>
+    </div>
   );
+}
 
-  const neighborhoods = getNeighborhoods(
-    selectedCity,
-    selectedDistrict,
-  );
+export default async function PropertyDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-  let seoul: Property[] = [];
-  let gyeonggi: Property[] = [];
-  let incheon: Property[] = [];
-  let lowDeposit: Property[] = [];
-  let filteredProperties: Property[] = [];
+  const { data, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("id", Number(id))
+    .single();
 
-  if (hasRegionFilter) {
-    filteredProperties = await getByRegion(
-      selectedCity,
-      selectedDistrict || undefined,
-      selectedNeighborhood || undefined,
-    );
-  } else if (hasSideFilter) {
-    filteredProperties = await getBySideFilter({
-      deposit: selectedDeposit || undefined,
-      depositMax: selectedDepositMax || undefined,
-      propertyType: selectedPropertyType || undefined,
-      roomsGroup: selectedRoomsGroup || undefined,
-      feature: selectedFeature || undefined,
-    });
-  } else {
-    [seoul, gyeonggi, incheon, lowDeposit] = await Promise.all([
-      getByCity("서울"),
-      getByCity("경기"),
-      getByCity("인천"),
-      getLowDeposit(),
-    ]);
+  if (error || !data) {
+    notFound();
   }
 
-  const cityLabel = CITY_LABELS[selectedCity] || selectedCity;
-  const regionHeading = [cityLabel, selectedDistrict]
+  const property = data as PropertyRow;
+
+  const { data: relatedData } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("status", "공개")
+    .neq("id", property.id)
+    .order("id", { ascending: false })
+    .limit(10);
+
+  const relatedProperties = (relatedData ?? []) as PropertyRow[];
+
+  const { data: consultationData } = await supabase
+    .from("consultations")
+    .select("id, phone, region, created_at")
+    .order("id", { ascending: false })
+    .limit(20);
+
+  const recentConsultations = (consultationData ?? []) as ConsultationRow[];
+
+  const { count: completedConsultationCount } = await supabase
+    .from("consultations")
+    .select("id", {
+      count: "exact",
+      head: true,
+    })
+    .eq("status", "완료");
+
+  const propertyImages = [
+    property.thumbnail_url,
+    ...(property.image_urls ?? []),
+  ].filter((url): url is string => Boolean(url && url.trim()));
+
+  const images =
+    propertyImages.length > 0 ? propertyImages : [NO_IMAGE_PLACEHOLDER];
+
+  const confirmedDate = formatDate(property.created_at);
+
+  const liveDate = formatDateTime(new Date().toISOString());
+
+  const addressText = [property.city, property.district, property.neighborhood]
     .filter(Boolean)
     .join(" ");
 
-  const districtBaseHref =
-    selectedCity && selectedDistrict
-      ? `/?city=${encodeURIComponent(
-          selectedCity,
-        )}&district=${encodeURIComponent(selectedDistrict)}`
-      : "/";
-
-  const seoulTitle = pageTitle(
-    pageSettings,
-    "seoul",
-    "서울분양정보",
-  );
-
-  const gyeonggiTitle = pageTitle(
-    pageSettings,
-    "gyeonggi",
-    "경기분양정보",
-  );
-
-  const incheonTitle = pageTitle(
-    pageSettings,
-    "incheon",
-    "인천분양정보",
-  );
-
-  const urgentTitle = pageTitle(
-    pageSettings,
-    "urgent",
-    "급매물분양",
-  );
-
-  const lowDepositTitle = pageTitle(
-    pageSettings,
-    "low_deposit",
-    "낮은실입주금",
-  );
-
-  const selectedCityKey =
-    selectedCity === "서울"
-      ? "seoul"
-      : selectedCity === "경기"
-        ? "gyeonggi"
-        : selectedCity === "인천"
-          ? "incheon"
-          : "";
-
-  const regionDisplayTitle =
-    !selectedDistrict && selectedCityKey
-      ? pageTitle(
-          pageSettings,
-          selectedCityKey,
-          regionHeading,
-        )
-      : regionHeading;
-
-  const sideFilterTitle =
-    selectedFeature === "급매물"
-      ? urgentTitle
-      : selectedDepositMax === "5000"
-        ? lowDepositTitle
-        : "매물정보";
+  const tickerConsultations = recentConsultations.map((item) => ({
+    id: item.id,
+    phone: maskPhone(item.phone),
+    region: item.region?.trim() || addressText || "수도권",
+  }));
 
   return (
-    <>
-      <Header />
-
-      <MainBannerSlider />
-
-      {pageVisible(pageSettings, "reviews") && (
-        <section className="km-home-review-row">
-          <div className="km-home-review-content">
-            <ReviewsSection />
-          </div>
-
-          <div className="km-home-quick-consult">
-            <QuickConsultCard />
-          </div>
-        </section>
-      )}
-
-      <main className="km-home-layout">
-        <aside className="km-home-left-column">
-          <LeftSidebar />
-        </aside>
-
-        <section className="km-home-center-column">
-          <div className="km-home-search-wrap">
+    <PublicPageFrame>
+          <div className="km-detail-search-wrap">
             <SearchPanel />
           </div>
 
-          {hasRegionFilter ? (
-            <>
-              <section className="dy-region-location-panel">
-                <h2>{regionDisplayTitle}</h2>
+          <div className="km-detail-view-heading">
+            <h2>보기</h2>
+          </div>
 
-                {selectedDistrict && neighborhoods.length > 0 ? (
-                  <nav
-                    className="dy-neighborhood-grid"
-                    aria-label={`${regionDisplayTitle} 동 선택`}
+          <section className="km-detail-property-heading">
+            <span className="km-detail-property-number">
+              매물번호 <b>{property.id}</b>
+            </span>
+
+            <h1>{property.title}</h1>
+
+          </section>
+
+          <div className="km-detail-notice">
+            <span>DY다이아부동산은</span>
+            <b>신축 분양 전문회사</b>
+            <span>입니다.</span>
+            <strong>전세 / 월세</strong>
+            <span>취급하지 않습니다.</span>
+          </div>
+
+          <div className="km-detail-top-grid">
+            <DetailGallery images={images} title={property.title} />
+
+            <div className="km-detail-side-stack">
+              <aside className="km-detail-summary-card">
+              <div className="km-detail-summary-title">
+                <img src="/dy-logo-transparent.png" alt="" />
+
+                <strong>분양정보 안내</strong>
+              </div>
+
+              <div className="km-detail-price-section">
+                <strong className="km-detail-price-heading">가격</strong>
+
+                <div className="km-detail-price-box">
+                  <div>
+                    <span className="km-chip km-chip-blue">분양가</span>
+
+                    <b>{property.price || "-"}</b>
+                  </div>
+
+                  <div>
+                    <span className="km-chip km-chip-pink">입주금</span>
+
+                    <b>{property.deposit || "-"}</b>
+                  </div>
+
+                  <div>
+                    <span className="km-chip km-chip-green">융자금</span>
+
+                    <b>{property.loan || "-"}</b>
+                  </div>
+                </div>
+              </div>
+
+              <div className="km-detail-summary-row">
+                <strong>면적</strong>
+
+                <span>
+                  {property.area_pyeong ? `${property.area_pyeong}평형` : "-"}
+                </span>
+              </div>
+
+              <div className="km-detail-summary-row">
+                <strong>방수</strong>
+
+                <span>
+                  방 {property.rooms}개 / 욕실 {property.bathrooms}개
+                </span>
+              </div>
+
+              <div className="km-detail-manager-title">
+                <img src="/dy-logo-transparent.png" alt="" />
+
+                <div>
+                  <strong>담당자정보 안내</strong>
+
+                  <small>친절한 상담 도와드리겠습니다.</small>
+                </div>
+              </div>
+
+              <div className="km-detail-summary-row">
+                <strong>담당자</strong>
+                <span>DY다이아부동산</span>
+              </div>
+
+              <div className="km-detail-summary-row">
+                <strong>안심번호</strong>
+
+                <a href="tel:01084268616">010-8426-8616</a>
+              </div>
+
+              </aside>
+
+              <DetailActionModal
+                mode="alert"
+                trigger="card"
+                propertyId={property.id}
+                propertyTitle={property.title}
+                defaultRegion={addressText}
+              />
+            </div>
+          </div>
+
+          <section className="dy-km-status-board">
+            <div className="dy-km-status-left">
+              <div className="dy-km-confirmed-box">
+                <b className="dy-km-confirmed-text">
+                  [{confirmedDate} <span>확인매물</span>
+                  입니다.]
+                </b>
+              </div>
+
+              <div className="dy26-live-box">
+                <span className="dy26-live-badge">LIVE</span>
+
+                <b className="dy26-live-date">{liveDate} 기준</b>
+
+                <strong className="dy26-live-count">
+                  <span className="dy26-live-number">
+                    {(completedConsultationCount ?? 0).toLocaleString()}명
+                  </span>
+
+                  <span className="dy26-live-label">상담완료</span>
+                </strong>
+              </div>
+            </div>
+
+            <ConsultationTicker
+              items={tickerConsultations}
+              fallbackRegion={addressText || "수도권"}
+            />
+          </section>
+
+          <DetailConsultForm
+            propertyId={property.id}
+            source="상세페이지 상단 상담신청"
+          />
+
+          <section className="km-detail-info-section">
+            <h2>
+              <span>DY</span> 기본정보
+            </h2>
+
+            <div className="km-detail-info-table">
+              <InfoRow
+                leftLabel="소재지"
+                leftValue={property.address}
+                rightLabel="주차대수"
+                rightValue="-"
+              />
+
+              <InfoRow
+                leftLabel="분양"
+                leftValue={property.price}
+                rightLabel="입주금"
+                rightValue={property.deposit}
+              />
+
+              <InfoRow
+                leftLabel="방/욕실"
+                leftValue={`방 ${property.rooms}개 / 욕실 ${property.bathrooms}개`}
+                rightLabel="면적정보"
+                rightValue={
+                  property.area_pyeong ? `${property.area_pyeong}평` : "-"
+                }
+              />
+
+              <InfoRow
+                leftLabel="층정보"
+                leftValue={property.floor}
+                rightLabel="엘리베이터"
+                rightValue="-"
+              />
+
+              <InfoRow
+                leftLabel="방향"
+                leftValue={property.direction}
+                rightLabel="관리비"
+                rightValue={property.maintenance_fee}
+              />
+
+              <InfoRow
+                leftLabel="베란다/발코니"
+                leftValue="-"
+                rightLabel="빌트인"
+                rightValue="-"
+              />
+
+              <InfoRow
+                leftLabel="입주가능일"
+                leftValue={property.move_in_status}
+                rightLabel="세대수"
+                rightValue="-"
+              />
+
+              <InfoRow
+                leftLabel="편의시설"
+                leftValue="-"
+                rightLabel="교육시설"
+                rightValue="-"
+              />
+
+              <InfoRow
+                leftLabel="인근지하철"
+                leftValue="-"
+                rightLabel="역과의거리"
+                rightValue="-"
+              />
+            </div>
+          </section>
+
+          {/* DY 안심분양 안내 이미지 */}
+          <section
+            className="km-detail-guide-image km-detail-guide-safe"
+            aria-label="DY다이아부동산 안심분양 안내"
+          >
+            <img
+              src="/images/dy-safe.png"
+              alt="DY다이아부동산 안심분양 안내"
+              width={900}
+              height={900}
+              loading="lazy"
+            />
+          </section>
+
+          {/* 전국은행 담보대출 안내 이미지 */}
+          <section
+            className="km-detail-guide-image km-detail-guide-loan"
+            aria-label="전국은행 담보대출 안내"
+          >
+            <img
+              src="/images/dy-loan-guide.png"
+              alt="업계 최대 전국은행 담보대출 통합서비스 안내"
+              width={779}
+              height={579}
+              loading="lazy"
+            />
+          </section>
+
+          <section className="km-detail-contact-table">
+            <h2>담당자정보</h2>
+
+            <div>
+              <strong>담당자</strong>
+              <span>DY다이아부동산</span>
+
+              <strong>안심번호</strong>
+
+              <a href="tel:01084268616">010-8426-8616</a>
+
+              <strong>이메일</strong>
+              <span>-</span>
+
+              <strong>매물번호</strong>
+
+              <span>
+                [{property.id}] {addressText}
+              </span>
+            </div>
+          </section>
+
+          <DetailConsultForm
+            propertyId={property.id}
+            source="상세페이지 하단 상담신청"
+            compact
+          />
+
+          <div className="km-detail-bottom-buttons">
+            <DetailActionModal
+              mode="consult"
+              trigger="button"
+              propertyId={property.id}
+              propertyTitle={property.title}
+              defaultRegion={addressText}
+            />
+
+            <PrintButton />
+
+            <Link href="/listings">최근 본 매물</Link>
+          </div>
+
+          <section className="km-related-section">
+            <div className="km-related-list">
+              {relatedProperties.map((item) => (
+                <article className="km-related-item" key={item.id}>
+                  <Link
+                    href={`/listings/${item.id}`}
+                    className="km-related-thumb"
                   >
-                    <Link
-                      href={districtBaseHref}
-                      className={
-                        selectedNeighborhood ? "" : "is-active"
-                      }
-                    >
-                      전체
+                    <img
+                      src={item.thumbnail_url?.trim() || NO_IMAGE_PLACEHOLDER}
+                      alt={item.title}
+                    />
+                  </Link>
+
+                  <div className="km-related-content">
+                    <div className="km-related-badges">
+                      <b className="dy-related-safe-badge">안심인증</b>
+                      <b className="dy-related-confirm-badge">
+                        {formatDate(item.created_at)} 확인
+                      </b>
+                      <b className="dy-related-new-badge">
+                        {item.listing_badge || "신축분양"}
+                      </b>
+                      <b className="dy-related-alert-badge">
+                        <RelatedBellIcon />
+                        알림
+                      </b>
+                    </div>
+
+                    <p className="km-related-number">
+                      [매물번호 {item.id}] {item.city} {item.district}{" "}
+                      {item.neighborhood}
+                    </p>
+
+                    <Link href={`/listings/${item.id}`}>
+                      <h3>{item.title}</h3>
                     </Link>
 
-                    {neighborhoods.map((name) => (
-                      <Link
-                        key={name}
-                        href={`${districtBaseHref}&neighborhood=${encodeURIComponent(
-                          name,
-                        )}`}
-                        className={
-                          selectedNeighborhood === name
-                            ? "is-active"
-                            : ""
-                        }
-                      >
-                        {name}
-                      </Link>
-                    ))}
-                  </nav>
-                ) : null}
-              </section>
+                    <div className="km-related-summary">
+                      <span>
+                        {item.area_pyeong ? `${item.area_pyeong}평` : "면적문의"}
+                        {item.area_pyeong ? (
+                          <em>({(item.area_pyeong * 3.3058).toFixed(0)}㎡)</em>
+                        ) : null}
+                      </span>
+                      <i>|</i>
+                      <span>방{item.rooms}욕실{item.bathrooms}</span>
+                      <i>|</i>
+                      <span>주차대수 문의</span>
+                    </div>
 
-              <PropertySection
-                title={regionDisplayTitle}
-                properties={filteredProperties}
-                variant="regional-list"
-              />
-            </>
-          ) : hasSideFilter ? (
-            <PropertySection
-              title={sideFilterTitle}
-              properties={filteredProperties}
-              variant="regional-list"
-            />
-          ) : (
-            <>
-              {pageVisible(pageSettings, "seoul") && (
-                <PropertySection
-                  title={seoulTitle}
-                  city="서울"
-                  properties={seoul}
-                />
-              )}
+                    <div className="km-related-subway">
+                      지하철 <strong>정보문의</strong>
+                    </div>
 
-              {pageVisible(pageSettings, "gyeonggi") && (
-                <PropertySection
-                  title={gyeonggiTitle}
-                  city="경기"
-                  properties={gyeonggi}
-                />
-              )}
+                    <div className="km-related-price">
+                      <span>분양가</span>
+                      <b>{item.price || "문의"}</b>
 
-              {pageVisible(pageSettings, "incheon") && (
-                <PropertySection
-                  title={incheonTitle}
-                  city="인천"
-                  properties={incheon}
-                />
-              )}
+                      <span>입주금</span>
+                      <b>{item.deposit || "문의"}</b>
 
-              {pageVisible(pageSettings, "low_deposit") && (
-                <PropertySection
-                  title={lowDepositTitle}
-                  properties={lowDeposit}
-                />
-              )}
-            </>
-          )}
-        </section>
+                      <span>융자금</span>
+                      <b>{item.loan || "문의"}</b>
+                    </div>
+                  </div>
 
-        <aside className="km-home-right-column">
-          <RightSidebar />
-        </aside>
-      </main>
+                  <aside>
+                    <strong>DY다이아부동산</strong>
 
-      <Footer />
+                    <a href="tel:01084268616">010-8426-8616</a>
 
-      <style>{`
-        .dy-region-location-panel {
-          margin: 18px 0 16px;
-        }
+                  </aside>
+                </article>
+              ))}
+            </div>
+          </section>
 
-        .dy-region-location-panel h2 {
-          margin: 0 0 14px;
-          color: #111;
-          font-size: 25px;
-          font-weight: 900;
-          letter-spacing: -1.2px;
-        }
+          <style>{`
+            .dy26-live-box {
+              min-width: 0;
+              height: 59px;
+              padding: 0 13px;
+              display: grid;
+              grid-template-columns: 58px minmax(0, 1fr) 150px;
+              gap: 10px;
+              align-items: center;
+              overflow: hidden;
+              background: #bc8950;
+              color: #fff;
+              white-space: nowrap;
+              box-sizing: border-box;
+            }
 
-        .dy-neighborhood-grid {
-          display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
-          border-top: 1px solid #d8d8d8;
-          border-left: 1px solid #d8d8d8;
-        }
+            .dy26-live-badge {
+              width: 48px;
+              height: 31px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border: 2px solid #fff;
+              border-radius: 9px;
+              color: #fff;
+              font-size: 12px;
+              font-weight: 900;
+              line-height: 1;
+              box-sizing: border-box;
+            }
 
-        .dy-neighborhood-grid a {
-          min-height: 34px;
-          padding: 7px 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-right: 1px solid #d8d8d8;
-          border-bottom: 1px solid #d8d8d8;
-          background: #fff;
-          color: #555;
-          font-size: 12px;
-          font-weight: 700;
-          text-align: center;
-          text-decoration: none;
-          box-sizing: border-box;
-        }
+            .dy26-live-date {
+              min-width: 0;
+              margin: 0;
+              overflow: hidden;
+              color: #fff;
+              font-size: 17px;
+              font-weight: 900;
+              line-height: 1;
+              text-align: center;
+              text-overflow: clip;
+              white-space: nowrap;
+            }
 
-        .dy-neighborhood-grid a:hover,
-        .dy-neighborhood-grid a.is-active {
-          background: #f6b51d;
-          color: #fff;
-        }
+            .dy26-live-count {
+              min-width: 0;
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 2px;
+              font-size: 17px;
+              font-weight: 900;
+              line-height: 1;
+              white-space: nowrap;
+            }
 
-        @media (max-width: 760px) {
-          .dy-region-location-panel h2 {
-            font-size: 21px;
-          }
+            .dy26-live-number {
+              color: #fff200;
+            }
 
-          .dy-neighborhood-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-          }
+            .dy26-live-label {
+              color: #fff;
+            }
 
-          .km-home-review-row {
-            width: calc(100% - 30px);
-            max-width: calc(100% - 30px);
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-            grid-template-columns: 1fr;
-          }
+            @media (max-width: 760px) {
+              .dy26-live-box {
+                width: 100%;
+                max-width: 100%;
+                height: 58px;
+                padding: 0 9px;
+                grid-template-columns: 50px minmax(0, 1fr) 112px;
+                gap: 6px;
+              }
 
-          .km-home-review-content {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-          }
+              .dy26-live-badge {
+                width: 46px;
+                height: 30px;
+                font-size: 11px;
+              }
 
-          .km-home-quick-consult {
-            display: none;
-          }
+              .dy26-live-date {
+                font-size: 13px;
+                letter-spacing: -0.65px;
+              }
 
-          .km-home-layout {
-            width: calc(100% - 30px);
-            max-width: calc(100% - 30px);
-            margin-left: auto;
-            margin-right: auto;
-            grid-template-columns: minmax(0, 1fr);
-          }
+              .dy26-live-count {
+                font-size: 13px;
+                gap: 1px;
+              }
+            }
 
-          .km-home-center-column,
-          .km-home-search-wrap {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-          }
-        }
-      `}</style>
-    </>
+            @media (max-width: 430px) {
+              .dy26-live-box {
+                padding: 0 7px;
+                grid-template-columns: 46px minmax(0, 1fr) 100px;
+                gap: 4px;
+              }
+
+              .dy26-live-badge {
+                width: 42px;
+                height: 28px;
+                font-size: 10px;
+              }
+
+              .dy26-live-date {
+                font-size: 11px;
+                letter-spacing: -0.75px;
+              }
+
+              .dy26-live-count {
+                font-size: 12px;
+              }
+            }
+          `}</style>
+
+    </PublicPageFrame>
   );
 }
