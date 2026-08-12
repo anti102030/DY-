@@ -108,9 +108,7 @@ export default function MainBannerSlider({
           padding: 5px 8px;
 
           border-radius: 20px;
-
           background: rgba(0, 0, 0, 0.55);
-
           color: #fff;
 
           z-index: 5;
@@ -128,7 +126,6 @@ export default function MainBannerSlider({
           border-radius: 50%;
 
           background: rgba(255, 255, 255, 0.15);
-
           color: #fff;
 
           font-size: 20px;
@@ -146,67 +143,88 @@ export default function MainBannerSlider({
           font-weight: 700;
         }
 
-        /* =========================
-           모바일 전용
-           PC 화면에는 영향 없음
-           ========================= */
+        /*
+          =========================
+          모바일만 변경
+          PC 화면 영향 없음
+          =========================
+        */
 
         @media (max-width: 760px) {
           .km-main-banner-slider {
-            width: 100%;
-            max-width: 100%;
-            height: auto !important;
-            min-height: 0 !important;
+            width: calc(100% - 24px);
+            max-width: calc(100% - 24px);
+
+            margin: 12px auto 16px;
+
+            position: relative;
+
             overflow: hidden;
+
+            aspect-ratio: 16 / 6;
+
             box-sizing: border-box;
           }
 
           .km-main-banner-track {
             position: relative;
+
             width: 100%;
-            max-width: 100%;
-            height: auto !important;
-            min-height: 0 !important;
+            height: 100%;
+
+            overflow: hidden;
           }
 
           .km-main-banner-slide {
+            position: absolute;
+            inset: 0;
+
             width: 100%;
-            max-width: 100%;
-            height: auto !important;
-            min-height: 0 !important;
+            height: 100%;
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+          }
+
+          .km-main-banner-slide.is-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
           }
 
           .km-main-banner-slide img {
             width: 100%;
-            max-width: 100%;
-            height: auto !important;
+            height: 100%;
 
             display: block;
 
-            object-fit: contain !important;
+            object-fit: contain;
             object-position: center;
+
+            background: #fff;
           }
 
           .km-main-banner-controls {
-            right: 8px;
-            bottom: 8px;
+            right: 7px;
+            bottom: 7px;
 
-            gap: 4px;
+            gap: 3px;
 
-            padding: 3px 6px;
+            padding: 3px 5px;
           }
 
           .km-main-banner-controls button {
-            width: 24px;
-            height: 24px;
+            width: 23px;
+            height: 23px;
 
-            font-size: 17px;
+            font-size: 16px;
           }
 
           .km-main-banner-controls span {
-            min-width: 30px;
+            min-width: 28px;
 
-            font-size: 10px;
+            font-size: 9px;
           }
         }
       `}</style>
