@@ -15,8 +15,13 @@ const BANNERS = [
 
 const AUTOPLAY_DELAY = 4000;
 
+type MainBannerSliderProps = {
+  showControls?: boolean;
+};
 
-export default function MainBannerSlider() {
+export default function MainBannerSlider({
+  showControls: _showControls,
+}: MainBannerSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
