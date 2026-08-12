@@ -20,18 +20,19 @@ export default function NoImagePlaceholder({
           height: 100%;
           min-height: 180px;
           overflow: hidden;
-          background: #080808;
+          background: #090909;
         }
 
         .dy-no-image :global(.dy-no-image-watermark) {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 62%;
-          max-width: 420px;
+          width: 78%;
+          max-width: 520px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
+          opacity: 0.72;
           pointer-events: none;
           user-select: none;
         }
@@ -42,7 +43,8 @@ export default function NoImagePlaceholder({
           }
 
           .dy-no-image :global(.dy-no-image-watermark) {
-            width: 68%;
+            width: 82%;
+            opacity: 0.76;
           }
         }
       `}</style>

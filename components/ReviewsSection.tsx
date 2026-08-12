@@ -331,15 +331,15 @@ export default function ReviewsSection() {
           transition: transform 0.25s ease;
         }
 
-        .dy26-review-image-wrap :global(.dy26-review-watermark) {
+        .dy26-review-image-wrap .dy26-review-watermark {
           position: absolute;
           top: 50%;
-          left: 50%;
-          width: 58%;
-          max-width: 280px;
+          left: 50%;          width: 64%;
+          max-width: 320px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
+          opacity: 0.42;
           pointer-events: none;
           user-select: none;
           z-index: 2;
@@ -426,7 +426,7 @@ export default function ReviewsSection() {
             background: #f2f2f2 !important;
           }
 
-          .dy26-review-image-wrap :global(.dy26-review-watermark) {
+          .dy26-review-image-wrap .dy26-review-watermark {
             width: 60% !important;
             max-width: 320px !important;
           }

@@ -1,65 +1,85 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import BrandWatermark from "@/components/BrandWatermark";
+import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 
 type Props = {
   images: string[];
   title: string;
 };
 
-const MAX_THUMBNAILS = 10;
-
 function isRealImage(image: string) {
   const value = image.trim();
+
   if (!value) return false;
+
+  // 상세페이지에서 사진이 없을 때 사용하는 SVG 임시 이미지 제외
   if (value.startsWith("data:image/svg+xml")) return false;
+
   return true;
 }
 
 export default function DetailGallery({ images, title }: Props) {
-  const realImages = useMemo(() => {
-    const seen = new Set<string>();
-
-    return images
-      .filter((image) => isRealImage(image))
-      .filter((image) => {
-        const normalized = image.trim();
-        if (seen.has(normalized)) return false;
-        seen.add(normalized);
-        return true;
-      })
-      .slice(0, MAX_THUMBNAILS);
-  }, [images]);
+  const realImages = useMemo(
+    () => images.filter((image) => isRealImage(image)),
+    [images]
+  );
 
   const hasImages = realImages.length > 0;
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [open, setOpen] = useState(false);
+
   const selectedImage = hasImages ? realImages[selectedIndex] : "";
 
   useEffect(() => {
-    if (selectedIndex >= realImages.length) setSelectedIndex(0);
+    if (selectedIndex >= realImages.length) {
+      setSelectedIndex(0);
+    }
   }, [realImages.length, selectedIndex]);
+
+  function previous() {
+    if (!hasImages) return;
+
+    setSelectedIndex((current) =>
+      current === 0 ? realImages.length - 1 : current - 1
+    );
+  }
+
+  function next() {
+    if (!hasImages) return;
+
+    setSelectedIndex((current) =>
+      current === realImages.length - 1 ? 0 : current + 1
+    );
+  }
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (open && event.key === "Escape") setOpen(false);
+      if (!open || !hasImages) return;
+
+      if (event.key === "Escape") setOpen(false);
+      if (event.key === "ArrowLeft") previous();
+      if (event.key === "ArrowRight") next();
     }
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open]);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, hasImages, realImages.length]);
 
   if (!hasImages) {
     return (
       <div className="km-detail-gallery-box">
-        <div className="km-detail-main-image km-detail-image-empty">사진 준비중</div>
+        <div className="km-detail-main-image dy-detail-empty-image">
+          <NoImagePlaceholder />
+        </div>
       </div>
     );
   }
-
-  const thumbnailSlots = Array.from({ length: MAX_THUMBNAILS }, (_, index) =>
-    realImages[index] ?? null,
-  );
 
   return (
     <>
@@ -73,14 +93,12 @@ export default function DetailGallery({ images, title }: Props) {
             <img src={selectedImage} alt={title} />
           </button>
 
-          <div className="km-detail-watermark-logo" aria-hidden="true">
-            <img src="/dy-logo-transparent.png" alt="" />
-          </div>
+          <BrandWatermark className="dy-detail-photo-watermark" />
         </div>
 
-        <div className="km-detail-thumbnails" aria-label="매물 사진 목록">
-          {thumbnailSlots.map((image, index) =>
-            image ? (
+        {realImages.length > 1 && (
+          <div className="km-detail-thumbnails">
+            {realImages.map((image, index) => (
               <button
                 type="button"
                 key={`${image}-${index}`}
@@ -93,24 +111,13 @@ export default function DetailGallery({ images, title }: Props) {
               >
                 <img src={image} alt={`${title} ${index + 1}`} />
               </button>
-            ) : (
-              <div
-                key={`empty-${index}`}
-                className="km-gallery-thumbnail km-gallery-thumbnail-empty"
-                aria-hidden="true"
-              />
-            ),
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {open && selectedImage && (
-        <div
-          className="km-gallery-modal"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpen(false)}
-        >
+        <div className="km-gallery-modal" role="dialog" aria-modal="true">
           <button
             type="button"
             className="km-gallery-close"
@@ -119,13 +126,102 @@ export default function DetailGallery({ images, title }: Props) {
           >
             ×
           </button>
-          <img
-            src={selectedImage}
-            alt={title}
-            onClick={(event) => event.stopPropagation()}
-          />
+
+          {realImages.length > 1 && (
+            <button
+              type="button"
+              className="km-gallery-modal-arrow km-gallery-modal-left"
+              onClick={previous}
+              aria-label="이전 사진"
+            >
+              ‹
+            </button>
+          )}
+
+          <div className="dy-gallery-modal-image-wrap">
+            <img src={selectedImage} alt={title} />
+            <BrandWatermark className="dy-modal-photo-watermark" />
+          </div>
+
+          {realImages.length > 1 && (
+            <button
+              type="button"
+              className="km-gallery-modal-arrow km-gallery-modal-right"
+              onClick={next}
+              aria-label="다음 사진"
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
+
+      <style jsx>{`
+        .dy-detail-empty-image {
+          background: #090909 !important;
+          border: 0 !important;
+          overflow: hidden;
+        }
+
+        :global(.dy-detail-photo-watermark) {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 58%;
+          max-width: 520px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.52;
+          pointer-events: none;
+          user-select: none;
+          z-index: 7;
+        }
+
+        .dy-gallery-modal-image-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          max-width: 90vw;
+          max-height: 90vh;
+        }
+
+        .dy-gallery-modal-image-wrap > img {
+          display: block;
+          max-width: 90vw;
+          max-height: 90vh;
+          object-fit: contain;
+        }
+
+        .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 52%;
+          max-width: 620px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.46;
+          pointer-events: none;
+          user-select: none;
+          z-index: 3;
+        }
+
+        @media (max-width: 760px) {
+          :global(.dy-detail-photo-watermark) {
+            width: 66%;
+            opacity: 0.56;
+          }
+
+          .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
+            width: 64%;
+            opacity: 0.50;
+          }
+        }
+      `}</style>
+
     </>
   );
 }
