@@ -665,49 +665,49 @@ export default async function PropertyDetailPage({
               .dy26-live-box {
                 width: 100%;
                 max-width: 100%;
-                height: 55px;
-                padding: 0 8px;
-                grid-template-columns: 42px minmax(0, 1fr) 96px;
-                gap: 5px;
+                height: 58px;
+                padding: 0 9px;
+                grid-template-columns: 50px minmax(0, 1fr) 112px;
+                gap: 6px;
               }
 
               .dy26-live-badge {
-                width: 38px;
-                height: 26px;
-                font-size: 9px;
+                width: 46px;
+                height: 30px;
+                font-size: 11px;
               }
 
               .dy26-live-date {
-                font-size: 10px;
-                letter-spacing: -0.45px;
+                font-size: 13px;
+                letter-spacing: -0.65px;
               }
 
               .dy26-live-count {
-                font-size: 10px;
+                font-size: 13px;
                 gap: 1px;
               }
             }
 
             @media (max-width: 430px) {
               .dy26-live-box {
-                padding: 0 6px;
-                grid-template-columns: 38px minmax(0, 1fr) 82px;
-                gap: 3px;
+                padding: 0 7px;
+                grid-template-columns: 46px minmax(0, 1fr) 100px;
+                gap: 4px;
               }
 
               .dy26-live-badge {
-                width: 35px;
-                height: 24px;
-                font-size: 8px;
+                width: 42px;
+                height: 28px;
+                font-size: 10px;
               }
 
               .dy26-live-date {
-                font-size: 8px;
-                letter-spacing: -0.5px;
+                font-size: 11px;
+                letter-spacing: -0.75px;
               }
 
               .dy26-live-count {
-                font-size: 9px;
+                font-size: 12px;
               }
             }
           `}</style>
