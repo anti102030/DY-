@@ -15,13 +15,8 @@ const BANNERS = [
 
 const AUTOPLAY_DELAY = 4000;
 
-type MainBannerSliderProps = {
-  showControls?: boolean;
-};
 
-export default function MainBannerSlider({
-  showControls = true,
-}: MainBannerSliderProps) {
+export default function MainBannerSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -29,12 +24,6 @@ export default function MainBannerSlider({
     setActiveIndex((current) => (current + 1) % BANNERS.length);
   }, []);
 
-  const movePrev = useCallback(() => {
-    setActiveIndex(
-      (current) =>
-        (current - 1 + BANNERS.length) % BANNERS.length
-    );
-  }, []);
 
   useEffect(() => {
     if (isPaused || BANNERS.length < 2) return;
@@ -67,70 +56,12 @@ export default function MainBannerSlider({
         ))}
       </div>
 
-      {showControls && BANNERS.length > 1 && (
-        <div className="km-main-banner-controls dy26-main-banner-controls">
-          <button
-            type="button"
-            onClick={movePrev}
-            aria-label="이전 배너"
-          >
-            ‹
-          </button>
-
-          <span>
-            {activeIndex + 1} / {BANNERS.length}
-          </span>
-
-          <button
-            type="button"
-            onClick={moveNext}
-            aria-label="다음 배너"
-          >
-            ›
-          </button>
-        </div>
-      )}
 
       <style jsx>{`
         .dy26-main-banner {
           position: relative;
         }
 
-        .dy26-main-banner-controls {
-          position: absolute;
-          right: 12px;
-          bottom: 12px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 5px 8px;
-          border-radius: 20px;
-          background: rgba(0, 0, 0, 0.55);
-          color: #fff;
-          z-index: 5;
-        }
-
-        .dy26-main-banner-controls button {
-          width: 28px;
-          height: 28px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 0;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.15);
-          color: #fff;
-          font-size: 20px;
-          line-height: 1;
-          cursor: pointer;
-        }
-
-        .dy26-main-banner-controls span {
-          min-width: 36px;
-          text-align: center;
-          font-size: 11px;
-          font-weight: 700;
-        }
 
         @media (max-width: 760px) {
           .dy26-main-banner {
@@ -178,23 +109,6 @@ export default function MainBannerSlider({
             transform: none !important;
           }
 
-          .dy26-main-banner-controls {
-            right: 7px !important;
-            bottom: 7px !important;
-            gap: 3px !important;
-            padding: 3px 5px !important;
-          }
-
-          .dy26-main-banner-controls button {
-            width: 23px !important;
-            height: 23px !important;
-            font-size: 16px !important;
-          }
-
-          .dy26-main-banner-controls span {
-            min-width: 28px !important;
-            font-size: 9px !important;
-          }
         }
       `}</style>
     </section>

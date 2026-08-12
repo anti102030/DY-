@@ -124,30 +124,6 @@ export default function ReviewsSection() {
     setCurrentIndex((current) => current + 1);
   }, [canSlide, isAnimating]);
 
-  const movePrev = useCallback(() => {
-    if (!canSlide || isAnimating) return;
-
-    if (currentIndex === 0) {
-      setCurrentIndex(sourceItems.length);
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsAnimating(true);
-          setCurrentIndex(sourceItems.length - 1);
-        });
-      });
-
-      return;
-    }
-
-    setIsAnimating(true);
-    setCurrentIndex((current) => current - 1);
-  }, [
-    canSlide,
-    currentIndex,
-    isAnimating,
-    sourceItems.length,
-  ]);
 
   function handleTransitionEnd() {
     if (!canSlide) return;
@@ -250,27 +226,7 @@ export default function ReviewsSection() {
           </div>
         </div>
 
-        {canSlide && (
-          <button
-            type="button"
-            className="km-review-arrow km-review-arrow-prev dy26-review-arrow dy26-review-prev"
-            aria-label="이전 고객후기"
-            onClick={movePrev}
-          >
-            ‹
-          </button>
-        )}
 
-        {canSlide && (
-          <button
-            type="button"
-            className="km-review-arrow km-review-arrow-next dy26-review-arrow dy26-review-next"
-            aria-label="다음 고객후기"
-            onClick={moveNext}
-          >
-            ›
-          </button>
-        )}
       </div>
 
       <style>{`
@@ -365,33 +321,6 @@ export default function ReviewsSection() {
           transform: scale(1.03);
         }
 
-        .dy26-review-arrow {
-          position: absolute;
-          top: 50%;
-          width: 34px;
-          height: 50px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transform: translateY(-50%);
-          border: 1px solid rgba(0, 0, 0, 0.15);
-          background: rgba(255, 255, 255, 0.92);
-          color: #333;
-          font-size: 29px;
-          font-weight: 400;
-          line-height: 1;
-          cursor: pointer;
-          z-index: 5;
-          box-sizing: border-box;
-        }
-
-        .dy26-review-prev {
-          left: 0;
-        }
-
-        .dy26-review-next {
-          right: 0;
-        }
 
         @media (max-width: 1100px) and (min-width: 761px) {
           .dy26-review-card img {
@@ -464,11 +393,6 @@ export default function ReviewsSection() {
             background: #f2f2f2 !important;
           }
 
-          .dy26-review-arrow {
-            width: 34px !important;
-            height: 46px !important;
-            font-size: 25px !important;
-          }
         }
 
         @media (max-width: 430px) {
