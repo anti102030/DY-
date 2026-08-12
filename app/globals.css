@@ -12280,3 +12280,234 @@ body .km-detail-bottom-buttons {
     grid-template-columns: 110px minmax(0, 1fr) !important;
   }
 }
+/* DY다이아부동산 모바일 최종 반응형 */
+@media screen and (max-width: 820px) {
+  html, body { width:100% !important; max-width:100% !important; min-width:0 !important; overflow-x:hidden !important; }
+  body * { box-sizing:border-box; }
+  img { max-width:100% !important; }
+
+  body .dy-unified-shell,
+  body .km-home-layout,
+  body .km-detail-shell,
+  body .km-listing-shell,
+  body .page-layout {
+    width:calc(100% - 20px) !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:0 !important;
+  }
+
+  body .dy-unified-left,
+  body .dy-unified-right,
+  body .km-home-left-column,
+  body .km-home-right-column,
+  body .km-detail-shell > .left-sidebar,
+  body .km-detail-shell > .right-sidebar,
+  body .km-detail-shell > .dy-right-sidebar,
+  body .km-listing-shell > .left-sidebar,
+  body .km-listing-right,
+  body .left-sidebar,
+  body .right-sidebar { display:none !important; }
+
+  body .dy-unified-center,
+  body .km-home-center-column,
+  body .km-detail-main,
+  body .km-listing-main {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+  }
+
+  body .dy-detail-review-row,
+  body .km-home-review-row,
+  body .reviews-section,
+  body .dy-reviews-section,
+  body .dy-review-section {
+    width:calc(100% - 20px) !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  body .dy-review-quick-consult,
+  body .km-home-quick-consult { display:none !important; }
+
+  body .reviews-grid,
+  body .dy-reviews-grid,
+  body .dy-main-review-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+
+  body .km-home-search-wrap,
+  body .km-detail-search-wrap,
+  body .dy-unified-search-form {
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 0 18px !important;
+    padding:0 !important;
+  }
+
+  body .km-search {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:block !important;
+    grid-template-columns:none !important;
+    padding:10px !important;
+    border:1px solid #ddd !important;
+    background:#fff !important;
+  }
+
+  body .km-search-title {
+    width:100% !important;
+    min-height:42px !important;
+    height:auto !important;
+    margin:0 0 8px !important;
+    padding:9px 12px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    border-radius:3px !important;
+    background:#333 !important;
+    color:#fff !important;
+    font-size:16px !important;
+    font-weight:900 !important;
+  }
+
+  body .km-search-fields { width:100% !important; min-width:0 !important; padding:0 !important; }
+  body .km-search-row { width:100% !important; min-width:0 !important; display:grid !important; gap:7px !important; }
+  body .km-search-row-top { grid-template-columns:118px minmax(0,1fr) !important; margin-bottom:7px !important; }
+  body .km-search-row-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  body .km-search-row-bottom select:last-child { grid-column:1 / -1 !important; }
+
+  body .km-search select,
+  body .km-search input {
+    width:100% !important;
+    min-width:0 !important;
+    height:40px !important;
+    padding:0 9px !important;
+    font-size:12px !important;
+  }
+
+  body .km-search-button {
+    width:100% !important;
+    height:44px !important;
+    margin-top:8px !important;
+    border:0 !important;
+    border-radius:3px !important;
+    background:#f4b420 !important;
+    color:#111 !important;
+    font-size:14px !important;
+    font-weight:900 !important;
+  }
+
+  body .property-section { width:100% !important; min-width:0 !important; margin-bottom:30px !important; }
+  body .property-grid { width:100% !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  body .property-card, body .property-card-link { width:100% !important; min-width:0 !important; }
+  body .property-title { width:100% !important; height:34px !important; padding:0 6px !important; font-size:11px !important; overflow:hidden !important; white-space:nowrap !important; text-overflow:ellipsis !important; }
+  body .property-image-wrap { width:100% !important; height:135px !important; }
+  body .property-info { padding:7px !important; }
+  body .info-row { min-height:23px !important; grid-template-columns:43px minmax(0,1fr) !important; gap:5px !important; font-size:10px !important; }
+
+  body .km-listing-search { width:100% !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:6px !important; padding:10px !important; }
+  body .km-listing-item { width:100% !important; display:grid !important; grid-template-columns:125px minmax(0,1fr) !important; gap:10px !important; padding:12px 0 !important; }
+  body .km-listing-thumb { width:125px !important; min-width:125px !important; height:110px !important; }
+  body .km-listing-content { width:100% !important; min-width:0 !important; }
+  body .km-listing-manager { grid-column:1 / -1 !important; width:100% !important; padding:8px 0 !important; flex-direction:row !important; gap:8px !important; border-left:0 !important; border-top:1px solid #eee !important; }
+
+  body .km-detail-property-heading,
+  body .km-detail-top-grid,
+  body .km-detail-side-stack,
+  body .km-detail-summary-card,
+  body .dy-km-status-board,
+  body .km-detail-status-panel,
+  body .km-detail-status-area {
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  body .km-detail-property-heading h1 { width:100% !important; min-width:0 !important; font-size:20px !important; line-height:1.35 !important; word-break:keep-all !important; overflow-wrap:break-word !important; }
+  body .km-detail-top-grid { display:grid !important; grid-template-columns:minmax(0,1fr) !important; gap:12px !important; }
+  body .km-detail-main-image { width:100% !important; height:auto !important; min-height:230px !important; max-height:340px !important; aspect-ratio:4 / 3 !important; }
+  body .km-detail-thumbnails { width:100% !important; grid-template-columns:repeat(5,minmax(0,1fr)) !important; gap:4px !important; }
+  body .dy-km-status-board, body .km-detail-status-panel, body .km-detail-status-area { grid-template-columns:minmax(0,1fr) !important; }
+
+  body .km-detail-consult-form,
+  body .km-detail-bottom-consult-form,
+  body .km-detail-bottom-consult > div,
+  body .km-consult-message-area {
+    width:100% !important;
+    min-width:0 !important;
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+
+  body .km-detail-info-row,
+  body .km-detail-contact-table > div {
+    width:100% !important;
+    min-width:0 !important;
+    grid-template-columns:92px minmax(0,1fr) !important;
+  }
+
+  body .km-related-section,
+  body .km-related-list { width:100% !important; min-width:0 !important; }
+
+  body .km-related-item {
+    width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-columns:120px minmax(0,1fr) !important;
+    column-gap:9px !important;
+    row-gap:7px !important;
+    min-height:0 !important;
+    padding:10px 0 !important;
+  }
+
+  body .km-related-thumb { width:120px !important; min-width:120px !important; height:100px !important; margin:0 !important; }
+  body .km-related-content { width:100% !important; min-width:0 !important; }
+  body .km-related-item > aside { grid-column:1 / -1 !important; width:100% !important; min-height:38px !important; padding:7px 0 0 !important; display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:center !important; gap:8px !important; border-left:0 !important; border-top:1px solid #eee !important; }
+
+  body footer, body .km-footer { width:100% !important; max-width:100% !important; min-width:0 !important; }
+  body .dy-footer-inner { width:calc(100% - 24px) !important; max-width:none !important; }
+  body .dy-footer-top-inner { grid-template-columns:1fr !important; gap:16px !important; padding:20px 0 !important; }
+  body .dy-footer-company-inner { flex-direction:column !important; align-items:flex-start !important; padding:20px 0 !important; }
+}
+
+@media screen and (max-width: 520px) {
+  body .dy-unified-shell,
+  body .km-home-layout,
+  body .km-detail-shell,
+  body .km-listing-shell,
+  body .page-layout { width:calc(100% - 16px) !important; }
+
+  body .km-search-row-top { grid-template-columns:1fr !important; }
+  body .km-search-row-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+
+  body .property-grid { grid-template-columns:1fr !important; gap:12px !important; }
+  body .property-image-wrap { height:auto !important; aspect-ratio:16 / 10 !important; }
+  body .property-title { height:38px !important; font-size:13px !important; }
+
+  body .reviews-grid,
+  body .dy-reviews-grid,
+  body .dy-main-review-grid { grid-template-columns:1fr !important; }
+
+  body .km-listing-search { grid-template-columns:1fr !important; }
+  body .km-listing-item { grid-template-columns:1fr !important; }
+  body .km-listing-thumb { width:100% !important; min-width:0 !important; height:auto !important; aspect-ratio:16 / 10 !important; }
+
+  body .km-detail-info-row,
+  body .km-detail-contact-table > div { grid-template-columns:84px minmax(0,1fr) !important; }
+
+  body .km-related-item { grid-template-columns:105px minmax(0,1fr) !important; }
+  body .km-related-thumb { width:105px !important; min-width:105px !important; height:90px !important; }
+}
