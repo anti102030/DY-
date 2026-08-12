@@ -15,17 +15,8 @@ import type { ReviewRow } from "@/lib/reviewTypes";
 const PLACEHOLDER =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(`
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="500"
-      height="340"
-    >
-      <rect
-        width="100%"
-        height="100%"
-        fill="#ececec"
-      />
-
+    <svg xmlns="http://www.w3.org/2000/svg" width="500" height="340">
+      <rect width="100%" height="100%" fill="#ececec" />
       <text
         x="50%"
         y="50%"
@@ -47,280 +38,149 @@ const TRANSITION_TIME = 500;
 export default function ReviewsSection() {
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [isPaused, setIsPaused] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-
-  /* 모바일 여부 */
   const [isMobile, setIsMobile] = useState(false);
 
   const timerRef = useRef<number | null>(null);
 
-  /*
-    모바일 화면 확인
-    760px 이하에서만 모바일 슬라이드 적용
-  */
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 760);
+    const media = window.matchMedia("(max-width: 760px)");
+
+    const updateMobile = () => {
+      setIsMobile(media.matches);
+      setCurrentIndex(0);
+      setIsAnimating(false);
     };
 
-    checkMobile();
-
-    window.addEventListener("resize", checkMobile);
+    updateMobile();
+    media.addEventListener("change", updateMobile);
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
+      media.removeEventListener("change", updateMobile);
     };
   }, []);
 
-  /*
-    고객후기 불러오기
-  */
   useEffect(() => {
     async function loadReviews() {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
         .eq("status", "공개")
-        .order("id", {
-          ascending: false,
-        })
+        .order("id", { ascending: false })
         .limit(30);
 
       if (error) {
-        console.error(
-          "고객후기 불러오기 실패:",
-          error,
-        );
-
+        console.error("고객후기 불러오기 실패:", error);
         return;
       }
 
-      setReviews(
-        (data ?? []) as ReviewRow[],
-      );
-
+      setReviews((data ?? []) as ReviewRow[]);
       setCurrentIndex(0);
     }
 
     loadReviews();
   }, []);
 
-  /*
-    후기가 없을 때 보여줄 기본 카드
-  */
   const fallbackItems = useMemo<ReviewRow[]>(
     () =>
-      Array.from(
-        {
-          length: VISIBLE_COUNT,
-        },
-
-        (_, index) => ({
-          id: -(index + 1),
-          title:
-            "DY다이아부동산 고객후기",
-          content: "",
-          author: null,
-          thumbnail_url: "",
-          image_urls: [],
-          status: "공개",
-          created_at:
-            new Date().toISOString(),
-          is_best: false,
-        }),
-      ),
+      Array.from({ length: VISIBLE_COUNT }, (_, index) => ({
+        id: -(index + 1),
+        title: "DY다이아부동산 고객후기",
+        content: "",
+        author: null,
+        thumbnail_url: "",
+        image_urls: [],
+        status: "공개",
+        created_at: new Date().toISOString(),
+        is_best: false,
+      })),
     [],
   );
 
-  const sourceItems =
-    reviews.length > 0
-      ? reviews
-      : fallbackItems;
-
-  /*
-    PC에서는 기존처럼 5개보다 많을 때 슬라이드.
-    모바일에서는 1개보다 많으면 슬라이드.
-  */
+  const sourceItems = reviews.length > 0 ? reviews : fallbackItems;
   const canSlide = isMobile
     ? sourceItems.length > 1
     : reviews.length > VISIBLE_COUNT;
 
-  /*
-    무한 슬라이드용 배열
-  */
   const sliderItems = useMemo(() => {
-    if (!canSlide) {
-      return sourceItems;
-    }
+    if (!canSlide) return sourceItems;
 
     return [
       ...sourceItems,
-      ...sourceItems.slice(
-        0,
-        isMobile ? 1 : VISIBLE_COUNT,
-      ),
+      ...sourceItems.slice(0, isMobile ? 1 : VISIBLE_COUNT),
     ];
-  }, [
-    canSlide,
-    sourceItems,
-    isMobile,
-  ]);
+  }, [canSlide, isMobile, sourceItems]);
 
-  /*
-    다음 한 칸
-  */
-  const moveNext =
-    useCallback(() => {
-      if (
-        !canSlide ||
-        isAnimating
-      ) {
-        return;
-      }
+  const moveNext = useCallback(() => {
+    if (!canSlide || isAnimating) return;
 
-      setIsAnimating(true);
+    setIsAnimating(true);
+    setCurrentIndex((current) => current + 1);
+  }, [canSlide, isAnimating]);
 
-      setCurrentIndex(
-        (current) =>
-          current + 1,
-      );
-    }, [
-      canSlide,
-      isAnimating,
-    ]);
+  const movePrev = useCallback(() => {
+    if (!canSlide || isAnimating) return;
 
-  /*
-    이전 한 칸
-  */
-  const movePrev =
-    useCallback(() => {
-      if (
-        !canSlide ||
-        isAnimating
-      ) {
-        return;
-      }
+    if (currentIndex === 0) {
+      setCurrentIndex(sourceItems.length);
 
-      /*
-        0에서 뒤로 가려고 하면
-        마지막 위치로 순간 이동 후
-        왼쪽 이동 애니메이션
-      */
-      if (currentIndex === 0) {
-        setCurrentIndex(
-          sourceItems.length,
-        );
-
+      requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setIsAnimating(true);
-
-            setCurrentIndex(
-              sourceItems.length - 1,
-            );
-          });
+          setIsAnimating(true);
+          setCurrentIndex(sourceItems.length - 1);
         });
+      });
 
-        return;
-      }
-
-      setIsAnimating(true);
-
-      setCurrentIndex(
-        (current) =>
-          current - 1,
-      );
-    }, [
-      canSlide,
-      currentIndex,
-      isAnimating,
-      sourceItems.length,
-    ]);
-
-  /*
-    애니메이션 종료
-  */
-  function handleTransitionEnd() {
-    if (!canSlide) {
       return;
     }
 
-    /*
-      복제된 영역까지 이동했으면
-      실제 처음 위치로 순간 이동
-    */
-    if (
-      currentIndex >=
-      sourceItems.length
-    ) {
+    setIsAnimating(true);
+    setCurrentIndex((current) => current - 1);
+  }, [canSlide, currentIndex, isAnimating, sourceItems.length]);
+
+  function handleTransitionEnd() {
+    if (!canSlide) return;
+
+    if (currentIndex >= sourceItems.length) {
       setIsAnimating(false);
-
       setCurrentIndex(0);
-
       return;
     }
 
     setIsAnimating(false);
   }
 
-  /*
-    자동 재생
-  */
   useEffect(() => {
-    if (
-      !canSlide ||
-      isPaused
-    ) {
-      return;
-    }
+    if (!canSlide || isPaused) return;
 
-    timerRef.current =
-      window.setInterval(() => {
-        moveNext();
-      }, AUTOPLAY_DELAY);
+    timerRef.current = window.setInterval(() => {
+      moveNext();
+    }, AUTOPLAY_DELAY);
 
     return () => {
-      if (
-        timerRef.current !== null
-      ) {
-        window.clearInterval(
-          timerRef.current,
-        );
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
       }
     };
-  }, [
-    canSlide,
-    isPaused,
-    moveNext,
-  ]);
+  }, [canSlide, isPaused, moveNext]);
 
   return (
     <section
       className="km-reviews"
-      onMouseEnter={() =>
-        setIsPaused(true)
-      }
-      onMouseLeave={() =>
-        setIsPaused(false)
-      }
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
-      {/* 제목 */}
       <div className="km-review-section-head">
         <h2>
-          <strong>DY</strong>{" "}
-          다이아부동산 고객후기
+          <strong>DY</strong> 다이아부동산 고객후기
         </h2>
 
         <div className="km-dot-line" />
 
-        <Link href="/reviews">
-          더보기 ＋
-        </Link>
+        <Link href="/reviews">더보기 ＋</Link>
       </div>
 
-      {/* 슬라이더 */}
       <div className="km-review-slider">
         <div className="km-review-slider-viewport">
           <div
@@ -328,73 +188,45 @@ export default function ReviewsSection() {
             style={{
               transform: isMobile
                 ? `translateX(calc(-${currentIndex} * (100% + 10px)))`
-                : `translateX(
-                    calc(
-                      -${currentIndex} *
-                      (
-                        (100% - 48px) / 5
-                        + 12px
-                      )
-                    )
-                  )`,
-
-              transition:
-                isAnimating
-                  ? `transform ${TRANSITION_TIME}ms ease`
-                  : "none",
+                : `translateX(calc(-${currentIndex} * (((100% - 48px) / 5) + 12px)))`,
+              transition: isAnimating
+                ? `transform ${TRANSITION_TIME}ms ease`
+                : "none",
             }}
-            onTransitionEnd={
-              handleTransitionEnd
-            }
+            onTransitionEnd={handleTransitionEnd}
           >
-            {sliderItems.map(
-              (
-                review,
-                index,
-              ) => {
-                const isFallback =
-                  review.id < 0;
+            {sliderItems.map((review, index) => {
+              const isFallback = review.id < 0;
+              const image = review.thumbnail_url?.trim() || PLACEHOLDER;
 
-                const image =
-                  review.thumbnail_url?.trim() ||
-                  PLACEHOLDER;
+              const card = (
+                <img src={image} alt={review.title || "고객후기"} />
+              );
 
-                const card = (
-                  <img
-                    src={image}
-                    alt={
-                      review.title ||
-                      "고객후기"
-                    }
-                  />
-                );
-
-                if (isFallback) {
-                  return (
-                    <div
-                      className="km-review-card"
-                      key={`fallback-${index}`}
-                    >
-                      {card}
-                    </div>
-                  );
-                }
-
+              if (isFallback) {
                 return (
-                  <Link
-                    key={`${review.id}-${index}`}
-                    href={`/reviews/${review.id}`}
+                  <div
                     className="km-review-card"
+                    key={`fallback-${index}`}
                   >
                     {card}
-                  </Link>
+                  </div>
                 );
-              },
-            )}
+              }
+
+              return (
+                <Link
+                  key={`${review.id}-${index}`}
+                  href={`/reviews/${review.id}`}
+                  className="km-review-card"
+                >
+                  {card}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
-        {/* 왼쪽 */}
         {canSlide && (
           <button
             type="button"
@@ -406,7 +238,6 @@ export default function ReviewsSection() {
           </button>
         )}
 
-        {/* 오른쪽 */}
         {canSlide && (
           <button
             type="button"
@@ -425,34 +256,21 @@ export default function ReviewsSection() {
           box-sizing: border-box;
         }
 
-        /*
-          =========================
-          제목
-          =========================
-        */
-
         .km-review-section-head {
           width: 100%;
           min-height: 40px;
-
           display: flex;
           align-items: center;
-
           gap: 10px;
-
           margin-bottom: 10px;
         }
 
         .km-review-section-head h2 {
           margin: 0;
-
           color: #111;
-
           font-size: 18px;
           font-weight: 900;
-
           white-space: nowrap;
-
           letter-spacing: -0.6px;
         }
 
@@ -462,174 +280,84 @@ export default function ReviewsSection() {
 
         .km-dot-line {
           flex: 1;
-
           height: 1px;
-
-          border-top:
-            1px dotted #bbb;
+          border-top: 1px dotted #bbb;
         }
 
         .km-review-section-head > a {
           min-width: 88px;
           height: 30px;
-
           display: inline-flex;
           align-items: center;
           justify-content: center;
-
-          border:
-            1px solid #d3d3d3;
-
+          border: 1px solid #d3d3d3;
           border-radius: 18px;
-
           background: #fff;
-
           color: #333;
-
           font-size: 11px;
           font-weight: 700;
-
           text-decoration: none;
-
           box-sizing: border-box;
         }
 
-        /*
-          =========================
-          슬라이더
-          =========================
-        */
-
         .km-review-slider {
           position: relative;
-
           width: 100%;
         }
 
         .km-review-slider-viewport {
           width: 100%;
-
           overflow: hidden;
         }
-
-        /*
-          PC
-          gap 12px
-          5개 보이도록
-        */
 
         .km-review-track {
           display: flex;
-
           align-items: stretch;
-
           gap: 12px;
-
           will-change: transform;
         }
 
-        /*
-          PC 카드 폭
-          전체폭 - gap 4개
-          나누기 5
-        */
-
         .km-review-card {
-          width:
-            calc(
-              (
-                100% - 48px
-              ) / 5
-            );
-
-          flex:
-            0 0
-            calc(
-              (
-                100% - 48px
-              ) / 5
-            );
-
+          width: calc((100% - 48px) / 5);
+          flex: 0 0 calc((100% - 48px) / 5);
           display: block;
-
           overflow: hidden;
-
-          border:
-            1px solid #d8d8d8;
-
+          border: 1px solid #d8d8d8;
           background: #eee;
-
           box-sizing: border-box;
-
           text-decoration: none;
         }
 
         .km-review-card img {
           width: 100%;
           height: 162px;
-
           display: block;
-
           object-fit: cover;
-
           background: #eee;
-
-          transition:
-            transform 0.25s ease;
+          transition: transform 0.25s ease;
         }
 
         .km-review-card:hover img {
           transform: scale(1.03);
         }
 
-        /*
-          =========================
-          화살표
-          =========================
-        */
-
         .km-review-arrow {
           position: absolute;
-
           top: 50%;
-
           width: 34px;
           height: 50px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
-          transform:
-            translateY(-50%);
-
-          border:
-            1px solid rgba(
-              0,
-              0,
-              0,
-              0.15
-            );
-
-          background:
-            rgba(
-              255,
-              255,
-              255,
-              0.92
-            );
-
+          transform: translateY(-50%);
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          background: rgba(255, 255, 255, 0.92);
           color: #333;
-
           font-size: 29px;
           font-weight: 400;
-
           line-height: 1;
-
           cursor: pointer;
-
           z-index: 5;
-
           box-sizing: border-box;
         }
 
@@ -645,12 +373,6 @@ export default function ReviewsSection() {
           background: #fff;
         }
 
-        /*
-          =========================
-          기존 태블릿
-          =========================
-        */
-
         @media (max-width: 1100px) {
           .km-review-card img {
             height: 145px;
@@ -663,20 +385,8 @@ export default function ReviewsSection() {
           }
 
           .km-review-card {
-            width:
-              calc(
-                (
-                  100% - 20px
-                ) / 3
-              );
-
-            flex:
-              0 0
-              calc(
-                (
-                  100% - 20px
-                ) / 3
-              );
+            width: calc((100% - 20px) / 3);
+            flex: 0 0 calc((100% - 20px) / 3);
           }
 
           .km-review-card img {
@@ -684,107 +394,72 @@ export default function ReviewsSection() {
           }
         }
 
-        /*
-          =========================
-          모바일 전용
-          760px 이하
-          =========================
-        */
-
         @media (max-width: 760px) {
-          .km-reviews {
+          .km-reviews,
+          .km-review-slider,
+          .km-review-slider-viewport {
             width: 100%;
             max-width: 100%;
             min-width: 0;
-
-            overflow: hidden;
-
             box-sizing: border-box;
           }
 
+          .km-reviews,
+          .km-review-slider,
+          .km-review-slider-viewport {
+            overflow: hidden;
+          }
+
           .km-review-section-head {
-            width: 100%;
-
             gap: 6px;
-
             margin-bottom: 8px;
           }
 
           .km-review-section-head h2 {
+            min-width: 0;
             font-size: 15px;
-
-            flex-shrink: 0;
+            line-height: 1.2;
+            white-space: nowrap;
           }
 
           .km-dot-line {
-            min-width: 10px;
+            min-width: 8px;
           }
 
           .km-review-section-head > a {
             width: 66px;
             min-width: 66px;
             height: 27px;
-
             font-size: 10px;
-
             flex-shrink: 0;
-          }
-
-          .km-review-slider {
-            width: 100%;
-            max-width: 100%;
-
-            overflow: hidden;
-          }
-
-          .km-review-slider-viewport {
-            width: 100%;
-            max-width: 100%;
-
-            overflow: hidden;
           }
 
           .km-review-track {
             width: 100%;
-
             gap: 10px;
-
             align-items: stretch;
           }
 
           .km-review-card {
             width: 100%;
             min-width: 100%;
-
             flex: 0 0 100%;
-
             box-sizing: border-box;
           }
 
           .km-review-card img {
             width: 100%;
             height: auto;
-
             aspect-ratio: 500 / 340;
-
             display: block;
-
-            object-fit: cover;
+            object-fit: contain;
+            background: #f3f3f3;
           }
 
           .km-review-arrow {
             width: 30px;
             height: 44px;
-
             font-size: 24px;
-          }
-
-          .km-review-arrow-prev {
-            left: 0;
-          }
-
-          .km-review-arrow-next {
-            right: 0;
           }
         }
       `}</style>

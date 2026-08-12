@@ -31,8 +31,7 @@ export default function MainBannerSlider({
 
   const movePrev = useCallback(() => {
     setActiveIndex(
-      (current) =>
-        (current - 1 + BANNERS.length) % BANNERS.length
+      (current) => (current - 1 + BANNERS.length) % BANNERS.length,
     );
   }, []);
 
@@ -69,11 +68,7 @@ export default function MainBannerSlider({
 
       {showControls && BANNERS.length > 1 && (
         <div className="km-main-banner-controls">
-          <button
-            type="button"
-            onClick={movePrev}
-            aria-label="이전 배너"
-          >
+          <button type="button" onClick={movePrev} aria-label="이전 배너">
             ‹
           </button>
 
@@ -81,11 +76,7 @@ export default function MainBannerSlider({
             {activeIndex + 1} / {BANNERS.length}
           </span>
 
-          <button
-            type="button"
-            onClick={moveNext}
-            aria-label="다음 배너"
-          >
+          <button type="button" onClick={moveNext} aria-label="다음 배너">
             ›
           </button>
         </div>
@@ -100,131 +91,94 @@ export default function MainBannerSlider({
           position: absolute;
           right: 12px;
           bottom: 12px;
-
           display: flex;
           align-items: center;
           gap: 6px;
-
           padding: 5px 8px;
-
           border-radius: 20px;
           background: rgba(0, 0, 0, 0.55);
           color: #fff;
-
           z-index: 5;
         }
 
         .km-main-banner-controls button {
           width: 28px;
           height: 28px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           border: 0;
           border-radius: 50%;
-
           background: rgba(255, 255, 255, 0.15);
           color: #fff;
-
           font-size: 20px;
           line-height: 1;
-
           cursor: pointer;
         }
 
         .km-main-banner-controls span {
           min-width: 36px;
-
           text-align: center;
-
           font-size: 11px;
           font-weight: 700;
         }
 
-        /*
-          =========================
-          모바일만 변경
-          PC 화면 영향 없음
-          =========================
-        */
-
         @media (max-width: 760px) {
           .km-main-banner-slider {
-            width: calc(100% - 24px);
-            max-width: calc(100% - 24px);
-
-            margin: 12px auto 16px;
-
-            position: relative;
-
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
+            margin: 14px auto 18px;
             overflow: hidden;
-
-            aspect-ratio: 16 / 6;
-
             box-sizing: border-box;
+            background: #fff;
           }
 
           .km-main-banner-track {
             position: relative;
-
             width: 100%;
-            height: 100%;
-
-            overflow: hidden;
           }
 
           .km-main-banner-slide {
-            position: absolute;
-            inset: 0;
-
+            display: none;
             width: 100%;
-            height: 100%;
-
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
           }
 
           .km-main-banner-slide.is-active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
+            display: block;
           }
 
           .km-main-banner-slide img {
             width: 100%;
-            height: 100%;
-
+            height: auto;
+            max-width: 100%;
             display: block;
-
             object-fit: contain;
             object-position: center;
-
-            background: #fff;
           }
 
           .km-main-banner-controls {
             right: 7px;
             bottom: 7px;
-
             gap: 3px;
-
             padding: 3px 5px;
           }
 
           .km-main-banner-controls button {
             width: 23px;
             height: 23px;
-
             font-size: 16px;
           }
 
           .km-main-banner-controls span {
             min-width: 28px;
-
             font-size: 9px;
+          }
+        }
+
+        @media (max-width: 430px) {
+          .km-main-banner-slider {
+            width: calc(100% - 24px);
+            max-width: calc(100% - 24px);
           }
         }
       `}</style>
