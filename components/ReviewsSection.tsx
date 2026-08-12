@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
 import { supabase } from "@/lib/supabase";
 import type { ReviewRow } from "@/lib/reviewTypes";
 
@@ -15,16 +22,35 @@ const PLACEHOLDER =
     </svg>
   `);
 
+const DESKTOP_VISIBLE = 5;
+const MOBILE_VISIBLE = 3;
+const AUTOPLAY_DELAY = 3500;
+const TRANSITION_TIME = 500;
+
 export default function ReviewsSection() {
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 760px)");
-    const update = () => setIsMobile(media.matches);
+
+    const update = () => {
+      setIsMobile(media.matches);
+      setCurrentIndex(0);
+      setIsAnimating(false);
+    };
+
     update();
     media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
+
+    return () => {
+      media.removeEventListener("change", update);
+    };
   }, []);
 
   useEffect(() => {
@@ -42,6 +68,7 @@ export default function ReviewsSection() {
       }
 
       setReviews((data ?? []) as ReviewRow[]);
+      setCurrentIndex(0);
     }
 
     loadReviews();
@@ -49,7 +76,7 @@ export default function ReviewsSection() {
 
   const fallbackItems = useMemo<ReviewRow[]>(
     () =>
-      Array.from({ length: 5 }, (_, index) => ({
+      Array.from({ length: DESKTOP_VISIBLE }, (_, index) => ({
         id: -(index + 1),
         title: "DY다이아부동산 고객후기",
         content: "",
@@ -64,45 +91,122 @@ export default function ReviewsSection() {
   );
 
   const sourceItems = reviews.length > 0 ? reviews : fallbackItems;
-  const renderedItems = isMobile ? sourceItems.slice(0, 3) : sourceItems.slice(0, 5);
+  const visibleCount = isMobile ? MOBILE_VISIBLE : DESKTOP_VISIBLE;
+  const canSlide = sourceItems.length > visibleCount;
+
+  const sliderItems = useMemo(() => {
+    if (!canSlide) return sourceItems;
+
+    return [
+      ...sourceItems,
+      ...sourceItems.slice(0, visibleCount),
+    ];
+  }, [canSlide, sourceItems, visibleCount]);
+
+  const moveNext = useCallback(() => {
+    if (!canSlide || isAnimating) return;
+
+    setIsAnimating(true);
+    setCurrentIndex((current) => current + 1);
+  }, [canSlide, isAnimating]);
+
+  function handleTransitionEnd() {
+    if (!canSlide) return;
+
+    if (currentIndex >= sourceItems.length) {
+      setIsAnimating(false);
+      setCurrentIndex(0);
+      return;
+    }
+
+    setIsAnimating(false);
+  }
+
+  useEffect(() => {
+    if (!canSlide || isPaused) return;
+
+    timerRef.current = window.setInterval(() => {
+      moveNext();
+    }, AUTOPLAY_DELAY);
+
+    return () => {
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
+      }
+    };
+  }, [canSlide, isPaused, moveNext]);
+
+  const transform = isMobile
+    ? `translateX(calc(-${currentIndex} * (((100% - 16px) / 3) + 8px)))`
+    : `translateX(calc(-${currentIndex} * (((100% - 48px) / 5) + 12px)))`;
 
   return (
-    <section className="km-reviews dy-mobile-ref-reviews">
+    <section
+      className="km-reviews dy-mobile-ref-reviews"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <div className="km-review-section-head dy-mobile-ref-review-head">
-        <h2><strong>DY</strong> 다이아부동산 고객후기</h2>
+        <h2>
+          <strong>DY</strong> 다이아부동산 고객후기
+        </h2>
+
         <div className="km-dot-line" />
+
         <Link href="/reviews">더보기 ＋</Link>
       </div>
 
-      <div className="dy-mobile-ref-review-grid">
-        {renderedItems.map((review, index) => {
-          const isFallback = review.id < 0;
-          const image = review.thumbnail_url?.trim() || PLACEHOLDER;
-          const content = (
-            <>
-              <img src={image} alt={review.title || "고객후기"} />
-              <p>{review.title || "고객후기"}</p>
-            </>
-          );
+      <div className="dy-mobile-ref-review-viewport">
+        <div
+          className="dy-mobile-ref-review-track"
+          style={{
+            transform,
+            transition: isAnimating
+              ? `transform ${TRANSITION_TIME}ms ease`
+              : "none",
+          }}
+          onTransitionEnd={handleTransitionEnd}
+        >
+          {sliderItems.map((review, index) => {
+            const isFallback = review.id < 0;
+            const image =
+              review.thumbnail_url?.trim() || PLACEHOLDER;
 
-          return isFallback ? (
-            <div className="dy-mobile-ref-review-card" key={`fallback-${index}`}>
-              {content}
-            </div>
-          ) : (
-            <Link
-              key={`${review.id}-${index}`}
-              href={`/reviews/${review.id}`}
-              className="dy-mobile-ref-review-card"
-            >
-              {content}
-            </Link>
-          );
-        })}
+            const content = (
+              <>
+                <img
+                  src={image}
+                  alt={review.title || "고객후기"}
+                />
+                <p>{review.title || "고객후기"}</p>
+              </>
+            );
+
+            return isFallback ? (
+              <div
+                className="dy-mobile-ref-review-card"
+                key={`fallback-${index}`}
+              >
+                {content}
+              </div>
+            ) : (
+              <Link
+                key={`${review.id}-${index}`}
+                href={`/reviews/${review.id}`}
+                className="dy-mobile-ref-review-card"
+              >
+                {content}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       <style>{`
-        .dy-mobile-ref-reviews { width: 100%; box-sizing: border-box; }
+        .dy-mobile-ref-reviews {
+          width: 100%;
+          box-sizing: border-box;
+        }
 
         .dy-mobile-ref-review-head {
           width: 100%;
@@ -122,7 +226,9 @@ export default function ReviewsSection() {
           letter-spacing: -0.6px;
         }
 
-        .dy-mobile-ref-review-head h2 strong { color: #e3a400; }
+        .dy-mobile-ref-review-head h2 strong {
+          color: #e3a400;
+        }
 
         .dy-mobile-ref-review-head .km-dot-line {
           flex: 1;
@@ -144,20 +250,30 @@ export default function ReviewsSection() {
           font-size: 11px;
           font-weight: 700;
           text-decoration: none;
+          box-sizing: border-box;
         }
 
-        .dy-mobile-ref-review-grid {
-          display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
+        .dy-mobile-ref-review-viewport {
+          width: 100%;
+          overflow: hidden;
+        }
+
+        .dy-mobile-ref-review-track {
+          display: flex;
+          align-items: stretch;
           gap: 12px;
+          will-change: transform;
         }
 
         .dy-mobile-ref-review-card {
+          width: calc((100% - 48px) / 5);
+          flex: 0 0 calc((100% - 48px) / 5);
           min-width: 0;
           display: block;
           overflow: hidden;
           color: inherit;
           text-decoration: none;
+          box-sizing: border-box;
         }
 
         .dy-mobile-ref-review-card img {
@@ -167,9 +283,12 @@ export default function ReviewsSection() {
           object-fit: cover;
           border: 1px solid #d8d8d8;
           background: #eee;
+          box-sizing: border-box;
         }
 
-        .dy-mobile-ref-review-card p { display: none; }
+        .dy-mobile-ref-review-card p {
+          display: none;
+        }
 
         @media (max-width: 760px) {
           .dy-mobile-ref-review-head {
@@ -183,7 +302,9 @@ export default function ReviewsSection() {
             letter-spacing: -0.8px !important;
           }
 
-          .dy-mobile-ref-review-head .km-dot-line { display: none !important; }
+          .dy-mobile-ref-review-head .km-dot-line {
+            display: none !important;
+          }
 
           .dy-mobile-ref-review-head > a {
             margin-left: auto !important;
@@ -193,9 +314,13 @@ export default function ReviewsSection() {
             font-size: 11px !important;
           }
 
-          .dy-mobile-ref-review-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          .dy-mobile-ref-review-track {
             gap: 8px !important;
+          }
+
+          .dy-mobile-ref-review-card {
+            width: calc((100% - 16px) / 3) !important;
+            flex: 0 0 calc((100% - 16px) / 3) !important;
           }
 
           .dy-mobile-ref-review-card img {
@@ -219,13 +344,18 @@ export default function ReviewsSection() {
         }
 
         @media (max-width: 390px) {
-          .dy-mobile-ref-review-head h2 { font-size: 15px !important; }
+          .dy-mobile-ref-review-head h2 {
+            font-size: 15px !important;
+          }
+
           .dy-mobile-ref-review-head > a {
             min-width: 68px !important;
             flex-basis: 68px !important;
           }
-          .dy-mobile-ref-review-grid { gap: 6px !important; }
-          .dy-mobile-ref-review-card p { font-size: 10px !important; }
+
+          .dy-mobile-ref-review-card p {
+            font-size: 10px !important;
+          }
         }
       `}</style>
     </section>

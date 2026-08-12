@@ -62,14 +62,15 @@ export default function MainBannerSlider({
         @media (max-width: 760px) {
           .dy-mobile-ref-banner {
             position: relative !important;
-            width: 100% !important;
-            max-width: 100% !important;
+            width: calc(100% - 30px) !important;
+            max-width: calc(100% - 30px) !important;
             height: auto !important;
             min-height: 0 !important;
-            margin: 0 !important;
+            margin: 16px auto 18px !important;
             padding: 0 !important;
             overflow: hidden !important;
             background: #fff !important;
+            box-sizing: border-box !important;
           }
 
           .dy-mobile-ref-banner-track {
@@ -77,35 +78,43 @@ export default function MainBannerSlider({
             width: 100% !important;
             height: auto !important;
             min-height: 0 !important;
+            aspect-ratio: 16 / 8.2 !important;
+            overflow: hidden !important;
+            background: #fff !important;
           }
 
           .dy-mobile-ref-banner-slide {
-            position: static !important;
+            position: absolute !important;
+            inset: 0 !important;
             display: none !important;
             width: 100% !important;
-            height: auto !important;
-            min-height: 0 !important;
+            height: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
             opacity: 1 !important;
             visibility: visible !important;
             transform: none !important;
+            overflow: hidden !important;
+            background: #fff !important;
           }
 
           .dy-mobile-ref-banner-slide.is-active {
-            display: block !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
           }
 
           .dy-mobile-ref-banner-slide img {
             position: static !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
-            max-height: none !important;
+            width: 94% !important;
+            max-width: 94% !important;
+            height: 94% !important;
+            max-height: 94% !important;
             display: block !important;
             object-fit: contain !important;
             object-position: center center !important;
             transform: none !important;
+            margin: auto !important;
           }
         }
       `}</style>
