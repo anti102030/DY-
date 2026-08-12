@@ -22,7 +22,7 @@ type MainBannerSliderProps = {
 };
 
 export default function MainBannerSlider({
-  showControls = false,
+  showControls: _showControls,
 }: MainBannerSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -41,101 +41,111 @@ export default function MainBannerSlider({
     };
   }, [isPaused, moveNext]);
 
+  const activeBanner = BANNERS[activeIndex];
+
   return (
     <section
-      className="km-main-gift-banner km-main-banner-slider"
+      className="dy-main-banner"
       aria-label="프로모션 배너"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="km-main-banner-track">
-        {BANNERS.map((banner, index) => (
-          <div
-            key={banner.desktopSrc}
-            className={`km-main-banner-slide ${
-              index === activeIndex ? "is-active" : ""
-            }`}
-            aria-hidden={index !== activeIndex}
-          >
-            <picture>
-              <source
-                media="(max-width: 760px)"
-                srcSet={banner.mobileSrc}
-              />
+      <picture className="dy-main-banner-picture">
+        <source
+          media="(max-width: 760px)"
+          srcSet={activeBanner.mobileSrc}
+        />
 
-              <img
-                src={banner.desktopSrc}
-                alt={banner.alt}
-              />
-            </picture>
-          </div>
-        ))}
-      </div>
+        <img
+          className="dy-main-banner-image"
+          src={activeBanner.desktopSrc}
+          alt={activeBanner.alt}
+        />
+      </picture>
 
       <style jsx>{`
-        .km-main-banner-slider {
+        /* ================================
+           PC
+           기존 배너 비율 그대로 유지
+        ================================= */
+
+        .dy-main-banner {
           position: relative;
           width: 100%;
+          margin: 0;
+          padding: 0;
           overflow: hidden;
+          background: #fff;
         }
 
-        .km-main-banner-track {
-          position: relative;
-          width: 100%;
-        }
-
-        .km-main-banner-slide {
-          display: none;
-          width: 100%;
-        }
-
-        .km-main-banner-slide.is-active {
-          display: block;
-        }
-
-        .km-main-banner-slide picture {
+        .dy-main-banner-picture {
           display: block;
           width: 100%;
+          margin: 0;
+          padding: 0;
         }
 
-        .km-main-banner-slide img {
+        .dy-main-banner-image {
           display: block;
           width: 100%;
+          max-width: 100%;
           height: auto;
+          margin: 0;
+          padding: 0;
           object-fit: contain;
-          object-position: center;
+          object-position: center center;
         }
 
-        /*
-         * 모바일 전용
-         * PC 스타일에는 영향 없음
-         */
+        /* ================================
+           모바일 전용
+           고정 높이 / aspect-ratio 제거
+           이미지 전체를 그대로 표시
+        ================================= */
+
         @media (max-width: 760px) {
-          .km-main-banner-slider {
-            width: calc(100% - 28px);
-            margin: 16px auto 28px;
-            padding: 0;
-            overflow: hidden;
+          .dy-main-banner {
+            position: relative !important;
+
+            width: calc(100% - 30px) !important;
+            max-width: calc(100% - 30px) !important;
+
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+
+            margin: 16px auto 24px !important;
+            padding: 0 !important;
+
+            overflow: visible !important;
+
+            aspect-ratio: auto !important;
+
+            background: #fff !important;
+
+            box-sizing: border-box !important;
           }
 
-          .km-main-banner-track {
-            width: 100%;
+          .dy-main-banner-picture {
+            position: static !important;
+
+            display: block !important;
+
+            width: 100% !important;
+            max-width: 100% !important;
+
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            aspect-ratio: auto !important;
+
+            overflow: visible !important;
           }
 
-          .km-main-banner-slide {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-          }
-
-          .km-main-banner-slide picture {
-            display: block;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-          }
-
-          .km-main-banner-slide img {
+          .dy-main-banner-image {
             position: static !important;
 
             display: block !important;
@@ -150,10 +160,14 @@ export default function MainBannerSlider({
             margin: 0 auto !important;
             padding: 0 !important;
 
+            aspect-ratio: auto !important;
+
             object-fit: contain !important;
             object-position: center center !important;
 
             transform: none !important;
+
+            clip: auto !important;
           }
         }
       `}</style>
