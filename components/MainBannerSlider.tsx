@@ -4,11 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 
 const BANNERS = [
   {
-    src: "/dy-main-gift-banner.png",
+    desktopSrc: "/dy-main-gift-banner.png",
+    mobileSrc: "/dy-main-gift-banner-mobile.jpg",
     alt: "상담 고객 스타벅스 기프티콘 및 고객 증정 이벤트",
   },
   {
-    src: "/hero-family-full.jpg",
+    desktopSrc: "/hero-family-full.jpg",
+    mobileSrc: "/hero-family-full-mobile.jpg",
     alt: "DY다이아부동산 내 집 마련 안내",
   },
 ];
@@ -29,93 +31,116 @@ export default function MainBannerSlider({
     setActiveIndex((current) => (current + 1) % BANNERS.length);
   }, []);
 
+
   useEffect(() => {
     if (isPaused || BANNERS.length < 2) return;
+
     const timer = window.setInterval(moveNext, AUTOPLAY_DELAY);
-    return () => window.clearInterval(timer);
+
+    return () => {
+      window.clearInterval(timer);
+    };
   }, [isPaused, moveNext]);
 
   return (
     <section
-      className="km-main-gift-banner km-main-banner-slider dy-mobile-ref-banner"
+      className="km-main-gift-banner km-main-banner-slider dy26-main-banner"
       aria-label="프로모션 배너"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="km-main-banner-track dy-mobile-ref-banner-track">
+      <div className="km-main-banner-track dy26-main-banner-track">
         {BANNERS.map((banner, index) => (
           <div
-            key={banner.src}
-            className={`km-main-banner-slide dy-mobile-ref-banner-slide${
+            key={banner.desktopSrc}
+            className={`km-main-banner-slide dy26-main-banner-slide${
               index === activeIndex ? " is-active" : ""
             }`}
             aria-hidden={index !== activeIndex}
           >
-            <img src={banner.src} alt={banner.alt} />
+            <picture>
+              <source
+                media="(max-width: 760px)"
+                srcSet={banner.mobileSrc}
+              />
+              <img src={banner.desktopSrc} alt={banner.alt} />
+            </picture>
           </div>
         ))}
       </div>
 
+
       <style jsx>{`
-        .dy-mobile-ref-banner { position: relative; }
+        .dy26-main-banner {
+          position: relative;
+        }
+
+        .dy26-main-banner-slide picture {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+
+        .dy26-main-banner-slide picture img {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
+
 
         @media (max-width: 760px) {
-          .dy-mobile-ref-banner {
-            position: relative !important;
+          .dy26-main-banner {
             width: calc(100% - 30px) !important;
             max-width: calc(100% - 30px) !important;
             height: auto !important;
             min-height: 0 !important;
-            margin: 16px auto 18px !important;
-            padding: 0 !important;
+            margin: 16px auto 22px !important;
             overflow: hidden !important;
             background: #fff !important;
             box-sizing: border-box !important;
           }
 
-          .dy-mobile-ref-banner-track {
+          .dy26-main-banner-track {
             position: relative !important;
             width: 100% !important;
             height: auto !important;
             min-height: 0 !important;
-            aspect-ratio: 16 / 8.2 !important;
-            overflow: hidden !important;
-            background: #fff !important;
           }
 
-          .dy-mobile-ref-banner-slide {
-            position: absolute !important;
-            inset: 0 !important;
+          .dy26-main-banner-slide {
+            position: static !important;
             display: none !important;
             width: 100% !important;
-            height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
+            height: auto !important;
+            min-height: 0 !important;
             opacity: 1 !important;
             visibility: visible !important;
             transform: none !important;
-            overflow: hidden !important;
-            background: #fff !important;
           }
 
-          .dy-mobile-ref-banner-slide.is-active {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+          .dy26-main-banner-slide.is-active {
+            display: block !important;
           }
 
-          .dy-mobile-ref-banner-slide img {
+          .dy26-main-banner-slide picture {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+          }
+
+          .dy26-main-banner-slide img {
             position: static !important;
-            width: 94% !important;
-            max-width: 94% !important;
-            height: 94% !important;
-            max-height: 94% !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
             display: block !important;
             object-fit: contain !important;
             object-position: center center !important;
             transform: none !important;
-            margin: auto !important;
+            margin: 0 auto !important;
           }
+
         }
       `}</style>
     </section>
