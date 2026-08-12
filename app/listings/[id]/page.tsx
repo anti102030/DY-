@@ -7,7 +7,8 @@ import PrintButton from "@/components/PrintButton";
 import RecentViewedTracker from "@/components/RecentViewedTracker";
 import ConsultationTicker from "@/components/ConsultationTicker";
 import PublicPageFrame from "@/components/PublicPageFrame";
-import DetailActionModal from "@/components/DetailActionModal";
+import BrandWatermark from "@/components/BrandWatermark";
+import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 import { supabase } from "@/lib/supabase";
 import type { PropertyRow } from "@/lib/propertyTypes";
 
@@ -40,6 +41,19 @@ const NO_IMAGE_PLACEHOLDER =
       </text>
     </svg>
   `);
+
+
+function isRealThumbnail(value?: string | null) {
+  const image = (value || "").trim();
+  if (!image) return false;
+
+  const normalized = image.toLowerCase();
+  if (normalized.startsWith("data:image/svg+xml")) return false;
+  if (normalized.includes("/images/no-image.png")) return false;
+  if (normalized.includes("/images/property-placeholder")) return false;
+
+  return true;
+}
 
 function formatDate(value?: string) {
   if (!value) return "-";
@@ -218,7 +232,10 @@ export default async function PropertyDetailPage({
 
   const confirmedDate = formatDate(property.created_at);
 
-  const liveDate = formatDateTime(new Date().toISOString());
+  const liveDate =
+    recentConsultations.length > 0
+      ? formatDateTime(recentConsultations[0].created_at)
+      : confirmedDate;
 
   const addressText = [property.city, property.district, property.neighborhood]
     .filter(Boolean)
@@ -326,18 +343,20 @@ export default async function PropertyDetailPage({
               <div className="km-detail-summary-row">
                 <strong>안심번호</strong>
 
-                <a href="tel:01084268616">010-8426-8616</a>
+                <a href="tel:01075854574">010-7585-4574</a>
               </div>
 
               </aside>
 
-              <DetailActionModal
-                mode="alert"
-                trigger="card"
-                propertyId={property.id}
-                propertyTitle={property.title}
-                defaultRegion={addressText}
-              />
+              <div className="km-detail-alert-box km-detail-alert-standalone">
+                <strong>알림 신청</strong>
+
+                <QuickBellIcon />
+
+                <p>
+                  확인하신 매물과 조건이 같은 매물이 나오면 문자로 안내드립니다.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -350,17 +369,17 @@ export default async function PropertyDetailPage({
                 </b>
               </div>
 
-              <div className="dy26-live-box">
-                <span className="dy26-live-badge">LIVE</span>
+              <div className="dy-km-live-box">
+                <span className="dy-km-live-badge">LIVE</span>
 
-                <b className="dy26-live-date">{liveDate} 기준</b>
+                <b className="dy-km-confirmed-text">{liveDate} 기준</b>
 
-                <strong className="dy26-live-count">
-                  <span className="dy26-live-number">
+                <strong className="dy-km-completed-count">
+                  <span className="dy-km-completed-number">
                     {(completedConsultationCount ?? 0).toLocaleString()}명
                   </span>
 
-                  <span className="dy26-live-label">상담완료</span>
+                  <span className="dy-km-completed-label">상담완료</span>
                 </strong>
               </div>
             </div>
@@ -486,7 +505,7 @@ export default async function PropertyDetailPage({
 
               <strong>안심번호</strong>
 
-              <a href="tel:01084268616">010-8426-8616</a>
+              <a href="tel:01075854574">010-7585-4574</a>
 
               <strong>이메일</strong>
               <span>-</span>
@@ -506,13 +525,7 @@ export default async function PropertyDetailPage({
           />
 
           <div className="km-detail-bottom-buttons">
-            <DetailActionModal
-              mode="consult"
-              trigger="button"
-              propertyId={property.id}
-              propertyTitle={property.title}
-              defaultRegion={addressText}
-            />
+            <a href="tel:01075854574">빠른상담신청</a>
 
             <PrintButton />
 
@@ -527,10 +540,17 @@ export default async function PropertyDetailPage({
                     href={`/listings/${item.id}`}
                     className="km-related-thumb"
                   >
-                    <img
-                      src={item.thumbnail_url?.trim() || NO_IMAGE_PLACEHOLDER}
-                      alt={item.title}
-                    />
+                    {isRealThumbnail(item.thumbnail_url) ? (
+                      <span className="dy-related-watermark-wrap">
+                        <img
+                          src={item.thumbnail_url!}
+                          alt={item.title}
+                        />
+                        <BrandWatermark className="dy-related-watermark" />
+                      </span>
+                    ) : (
+                      <NoImagePlaceholder />
+                    )}
                   </Link>
 
                   <div className="km-related-content">
@@ -589,128 +609,57 @@ export default async function PropertyDetailPage({
                   <aside>
                     <strong>DY다이아부동산</strong>
 
-                    <a href="tel:01084268616">010-8426-8616</a>
+                    <a href="tel:01075854574">010-7585-4574</a>
 
                   </aside>
                 </article>
               ))}
             </div>
           </section>
+    
+      <style>{`
+        .km-related-thumb {
+          position: relative;
+          overflow: hidden;
+        }
 
-          <style>{`
-            .dy26-live-box {
-              min-width: 0;
-              height: 59px;
-              padding: 0 13px;
-              display: grid;
-              grid-template-columns: 58px minmax(0, 1fr) 150px;
-              gap: 10px;
-              align-items: center;
-              overflow: hidden;
-              background: #bc8950;
-              color: #fff;
-              white-space: nowrap;
-              box-sizing: border-box;
-            }
+        .dy-related-watermark-wrap {
+          position: relative;
+          display: block;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
 
-            .dy26-live-badge {
-              width: 48px;
-              height: 31px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              border: 2px solid #fff;
-              border-radius: 9px;
-              color: #fff;
-              font-size: 12px;
-              font-weight: 900;
-              line-height: 1;
-              box-sizing: border-box;
-            }
+        .dy-related-watermark-wrap > img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
 
-            .dy26-live-date {
-              min-width: 0;
-              margin: 0;
-              overflow: hidden;
-              color: #fff;
-              font-size: 17px;
-              font-weight: 900;
-              line-height: 1;
-              text-align: center;
-              text-overflow: clip;
-              white-space: nowrap;
-            }
+        .dy-related-watermark-wrap .dy-related-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 34%;
+          max-width: 160px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.30;
+          pointer-events: none;
+          user-select: none;
+          z-index: 4;
+        }
 
-            .dy26-live-count {
-              min-width: 0;
-              display: flex;
-              align-items: center;
-              justify-content: flex-end;
-              gap: 2px;
-              font-size: 17px;
-              font-weight: 900;
-              line-height: 1;
-              white-space: nowrap;
-            }
-
-            .dy26-live-number {
-              color: #fff200;
-            }
-
-            .dy26-live-label {
-              color: #fff;
-            }
-
-            @media (max-width: 760px) {
-              .dy26-live-box {
-                width: 100%;
-                max-width: 100%;
-                height: 58px;
-                padding: 0 9px;
-                grid-template-columns: 50px minmax(0, 1fr) 112px;
-                gap: 6px;
-              }
-
-              .dy26-live-badge {
-                width: 46px;
-                height: 30px;
-                font-size: 11px;
-              }
-
-              .dy26-live-date {
-                font-size: 13px;
-                letter-spacing: -0.65px;
-              }
-
-              .dy26-live-count {
-                font-size: 13px;
-                gap: 1px;
-              }
-            }
-
-            @media (max-width: 430px) {
-              .dy26-live-box {
-                padding: 0 7px;
-                grid-template-columns: 46px minmax(0, 1fr) 100px;
-                gap: 4px;
-              }
-
-              .dy26-live-badge {
-                width: 42px;
-                height: 28px;
-                font-size: 10px;
-              }
-
-              .dy26-live-date {
-                font-size: 11px;
-                letter-spacing: -0.75px;
-              }
-
-              .dy26-live-count {
-                font-size: 12px;
-              }
-            }
-          `}</style>
+        @media (max-width: 760px) {
+          .dy-related-watermark-wrap .dy-related-watermark {
+            width: 38%;
+            opacity: 0.34;
+          }
+        }
+      `}</style>
 
     </PublicPageFrame>
   );

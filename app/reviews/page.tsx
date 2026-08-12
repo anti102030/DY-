@@ -6,6 +6,7 @@ import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import SearchPanel from "@/components/SearchPanel";
 import Footer from "@/components/Footer";
+import BrandWatermark from "@/components/BrandWatermark";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -238,10 +239,9 @@ export default async function ReviewsPage({
                 </Link>
               ) : (
                 <div className="dy-featured-review-card">
-                  <img
-                    src="/images/no-image.png"
-                    alt="고객 베스트 후기"
-                  />
+                  <span className="dy-review-watermark-empty">
+                    <BrandWatermark className="dy-review-page-watermark" />
+                  </span>
 
                   <div>
                     <strong>고객 베스트 후기</strong>
@@ -252,7 +252,7 @@ export default async function ReviewsPage({
 
               <div className="dy-featured-review-card dy-fixed-promo-card">
                 <img
-                  src="/best-review-tv-cropped.png"
+                  src="/best-review-tv.png"
                   alt="베스트후기 및 입주자 추첨 75인치 삼성 4K TV 증정"
                 />
               </div>
@@ -273,13 +273,16 @@ export default async function ReviewsPage({
                   className="dy-review-card"
                   key={review.id}
                 >
-                  <img
-                    src={
-                      review.thumbnail_url ||
-                      "/images/no-image.png"
-                    }
-                    alt={review.title || "고객후기"}
-                  />
+                  <span className="dy-review-watermark-image">
+                    <img
+                      src={
+                        review.thumbnail_url ||
+                        "/images/no-image.png"
+                      }
+                      alt={review.title || "고객후기"}
+                    />
+                    <BrandWatermark className="dy-review-page-watermark" />
+                  </span>
 
                   <div>
                     <h2>{review.title || "고객후기"}</h2>
@@ -480,19 +483,16 @@ export default async function ReviewsPage({
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 12px;
           padding: 12px;
-          align-items: stretch;
         }
 
         .dy-featured-review-card {
           min-width: 0;
-          height: 313px;
           display: block;
           border: 1px solid #d8d8d8;
           background: #fff;
           color: inherit;
           text-decoration: none;
           overflow: hidden;
-          box-sizing: border-box;
         }
 
         .dy-featured-review-card img {
@@ -503,31 +503,18 @@ export default async function ReviewsPage({
         }
 
         .dy-fixed-promo-card {
-          display: block;
-          height: 313px;
-          overflow: hidden;
-          padding: 0 !important;
-          margin: 0 !important;
-          border: 1px solid #d8d8d8;
-          background: #000;
-          line-height: 0;
           pointer-events: none;
-          box-sizing: border-box;
         }
 
         .dy-fixed-promo-card img {
-          display: block;
           width: 100%;
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          object-fit: fill;
-          object-position: center;
-          background: #000;
+          height: 313px;
+          display: block;
+          object-fit: cover;
         }
 
         .dy-fixed-promo-card > div {
-          display: none !important;
+          display: none;
         }
 
         .dy-featured-review-card div {
@@ -829,6 +816,50 @@ export default async function ReviewsPage({
 
           .dy-review-card-grid {
             grid-template-columns: 1fr;
+          }
+        }
+
+        .dy-review-watermark-image,
+        .dy-review-watermark-empty {
+          position: relative;
+          display: block;
+          width: 100%;
+          overflow: hidden;
+        }
+
+        .dy-review-watermark-image > img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .dy-review-watermark-empty {
+          min-height: 220px;
+          background: #090909;
+        }
+
+        .dy-review-watermark-image .dy-review-page-watermark,
+        .dy-review-watermark-empty .dy-review-page-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 36%;
+          max-width: 210px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.30;
+          pointer-events: none;
+          user-select: none;
+          z-index: 4;
+        }
+
+        @media (max-width: 760px) {
+          .dy-review-watermark-image .dy-review-page-watermark,
+          .dy-review-watermark-empty .dy-review-page-watermark {
+            width: 40%;
+            opacity: 0.34;
           }
         }
       `}</style>

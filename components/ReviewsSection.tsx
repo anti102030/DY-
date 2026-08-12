@@ -334,12 +334,12 @@ export default function ReviewsSection() {
         .dy26-review-image-wrap .dy26-review-watermark {
           position: absolute;
           top: 50%;
-          left: 50%;          width: 64%;
-          max-width: 320px;
+          left: 50%;          width: 42%;
+          max-width: 220px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.42;
+          opacity: 0.32;
           pointer-events: none;
           user-select: none;
           z-index: 2;

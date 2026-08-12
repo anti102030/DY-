@@ -27,12 +27,12 @@ export default function NoImagePlaceholder({
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 52%;
-          max-width: 300px;
+          width: 46%;
+          max-width: 260px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.52;
+          opacity: 0.46;
           pointer-events: none;
           user-select: none;
         }
@@ -43,8 +43,8 @@ export default function NoImagePlaceholder({
           }
 
           .dy-no-image :global(.dy-no-image-watermark) {
-            width: 58%;
-            opacity: 0.56;
+            width: 50%;
+            opacity: 0.50;
           }
         }
       `}</style>

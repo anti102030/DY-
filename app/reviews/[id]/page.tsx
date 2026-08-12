@@ -9,6 +9,7 @@ import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import SearchPanel from "@/components/SearchPanel";
 import Footer from "@/components/Footer";
+import BrandWatermark from "@/components/BrandWatermark";
 
 export const dynamic = "force-dynamic";
 
@@ -235,8 +236,11 @@ export default async function ReviewDetailPage({
                       image,
                       index,
                     ) => (
-                      <img
+                      <div
                         key={`${image}-${index}`}
+                        className="dy-review-detail-watermark-wrap"
+                      >
+                        <img
                         src={image}
                         alt={`${
                           review.title ||
@@ -245,6 +249,8 @@ export default async function ReviewDetailPage({
                           index + 1
                         }`}
                       />
+                        <BrandWatermark className="dy-review-detail-watermark" />
+                      </div>
                     ),
                   )}
                 </div>
@@ -355,16 +361,19 @@ export default async function ReviewDetailPage({
                         className="dy-review-related-card"
                         key={item.id}
                       >
-                        <img
-                          src={
-                            item.thumbnail_url ||
-                            "/images/no-image.png"
-                          }
-                          alt={
-                            item.title ||
-                            "고객후기"
-                          }
-                        />
+                        <span className="dy-review-related-watermark-wrap">
+                          <img
+                            src={
+                              item.thumbnail_url ||
+                              "/images/no-image.png"
+                            }
+                            alt={
+                              item.title ||
+                              "고객후기"
+                            }
+                          />
+                          <BrandWatermark className="dy-review-related-watermark" />
+                        </span>
 
                         <div>
                           {item.title ||
@@ -1113,6 +1122,76 @@ export default async function ReviewDetailPage({
           .dy-review-related-grid {
             grid-template-columns:
               1fr;
+          }
+        }
+
+        .dy-review-detail-watermark-wrap,
+        .dy-review-related-watermark-wrap {
+          position: relative;
+          display: block;
+          overflow: hidden;
+        }
+
+        .dy-review-detail-watermark-wrap {
+          width: fit-content;
+          max-width: 100%;
+          margin: 0 auto;
+        }
+
+        .dy-review-detail-watermark-wrap > img {
+          display: block;
+          width: auto;
+          max-width: 100%;
+          height: auto;
+          object-fit: contain;
+        }
+
+        .dy-review-detail-watermark-wrap .dy-review-detail-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 32%;
+          max-width: 220px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.30;
+          pointer-events: none;
+          user-select: none;
+          z-index: 4;
+        }
+
+        .dy-review-related-watermark-wrap {
+          width: 100%;
+          height: 100%;
+        }
+
+        .dy-review-related-watermark-wrap > img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .dy-review-related-watermark-wrap .dy-review-related-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 36%;
+          max-width: 150px;
+          height: auto;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          opacity: 0.30;
+          pointer-events: none;
+          user-select: none;
+          z-index: 4;
+        }
+
+        @media (max-width: 760px) {
+          .dy-review-detail-watermark-wrap .dy-review-detail-watermark {
+            width: 36%;
+            opacity: 0.34;
           }
         }
       `}</style>

@@ -46,6 +46,19 @@ const CONTACT_NUMBER = "010-8426-8616";
 const CONTACT_TEL = "01084268616";
 const FALLBACK_IMAGE = "/images/property-placeholder.jpg";
 
+function isRealPropertyImage(value?: string | null) {
+  const image = (value || "").trim();
+  if (!image) return false;
+
+  const normalized = image.toLowerCase();
+
+  if (normalized.startsWith("data:image/svg+xml")) return false;
+  if (normalized.includes("/images/no-image.png")) return false;
+  if (normalized.includes("/images/property-placeholder")) return false;
+
+  return true;
+}
+
 function getCityDisplayName(city?: string) {
   if (city === "서울") return "서울특별시";
   if (city === "경기") return "경기도";
@@ -495,7 +508,7 @@ export default async function ListingsPage({
                   className="km-listing-thumb"
                   aria-label={`${property.title} 상세보기`}
                 >
-                  {property.thumbnail_url?.trim() ? (
+                  {isRealPropertyImage(property.thumbnail_url) ? (
                     <span className="dy-listing-photo-wrap">
                       <img
                         src={property.thumbnail_url}
@@ -685,12 +698,12 @@ export default async function ListingsPage({
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 38%;
-          max-width: 210px;
+          width: 34%;
+          max-width: 190px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.34;
+          opacity: 0.30;
           pointer-events: none;
           user-select: none;
           z-index: 3;
@@ -698,8 +711,8 @@ export default async function ListingsPage({
 
         @media (max-width: 760px) {
           .dy-listing-photo-wrap .dy-listing-watermark {
-            width: 42%;
-            opacity: 0.38;
+            width: 38%;
+            opacity: 0.34;
           }
         }
       `}</style>
