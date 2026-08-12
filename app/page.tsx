@@ -9,7 +9,6 @@ import PropertySection from "@/components/PropertySection";
 import RightSidebar from "@/components/RightSidebar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getNeighborhoods } from "@/lib/regionNeighborhoods";
 import type { PropertyRow } from "@/lib/propertyTypes";
 import type { Property } from "@/lib/homeData";
@@ -18,24 +17,12 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const HOME_LIMIT = 6;
-const FILTER_LIMIT = 30;
+const REGION_LIMIT = 30;
 
 type HomeSearchParams = {
   city?: string;
   district?: string;
   neighborhood?: string;
-  deposit?: string;
-  deposit_max?: string;
-  property_type?: string;
-  rooms_group?: string;
-  feature?: string;
-};
-
-type PageSetting = {
-  page_key: string;
-  title: string | null;
-  description: string | null;
-  is_visible: boolean;
 };
 
 const CITY_LABELS: Record<string, string> = {
@@ -52,17 +39,16 @@ function toProperty(row: PropertyRow): Property {
     image: row.thumbnail_url || "",
     location:
       row.neighborhood || row.district || row.city || "지역 미입력",
-    address: row.address || "",
     city: row.city || "",
     district: row.district || "",
     neighborhood: row.neighborhood || "",
+    listingBadge: row.listing_badge || "신축분양",
+    rooms: row.rooms || 0,
+    bathrooms: row.bathrooms || 0,
+    areaPyeong: row.area_pyeong,
     price: row.price || "-",
     deposit: row.deposit || "-",
     loan: row.loan || "-",
-    rooms: row.rooms,
-    bathrooms: row.bathrooms,
-    areaPyeong: row.area_pyeong,
-    listingBadge: row.listing_badge || "신축분양",
   };
 }
 
@@ -104,7 +90,7 @@ async function getByRegion(
 
   const { data, error } = await query
     .order("id", { ascending: false })
-    .limit(FILTER_LIMIT);
+    .limit(REGION_LIMIT);
 
   if (error) {
     console.error(
@@ -135,261 +121,18 @@ async function getLowDeposit(): Promise<Property[]> {
   return ((data ?? []) as PropertyRow[]).map(toProperty);
 }
 
-function parseKoreanMoney(value?: string | null): number | null {
-  if (value === null || value === undefined) return null;
-
-  const normalized = String(value)
-    .replace(/,/g, "")
-    .replace(/\s+/g, "")
-    .trim();
-
-  if (!normalized) return null;
-
-  if (
-    normalized === "0" ||
-    normalized === "0원" ||
-    normalized.includes("무입주금") ||
-    normalized.includes("입주금없음")
-  ) {
-    return 0;
-  }
-
-  let total = 0;
-  let matched = false;
-
-  const eokMatch = normalized.match(/(\d+(?:\.\d+)?)억/);
-  if (eokMatch) {
-    total += Number(eokMatch[1]) * 10000;
-    matched = true;
-  }
-
-  const manMatch = normalized.match(/(\d+(?:\.\d+)?)만/);
-  if (manMatch) {
-    total += Number(manMatch[1]);
-    matched = true;
-  }
-
-  if (matched) return total;
-
-  const plainNumber = normalized.match(/\d+(?:\.\d+)?/);
-  if (!plainNumber) return null;
-
-  return Number(plainNumber[0]);
-}
-
-function matchesPropertyType(
-  row: PropertyRow,
-  propertyType?: string,
-): boolean {
-  if (!propertyType) return true;
-
-  const searchableText = [
-    row.property_type,
-    row.title,
-    row.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  return searchableText.includes(propertyType.toLowerCase());
-}
-
-function matchesFeature(
-  row: PropertyRow,
-  feature?: string,
-): boolean {
-  if (!feature) return true;
-
-  const searchableText = [
-    row.property_type,
-    row.title,
-    row.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (feature === "테라스복층") {
-    return (
-      searchableText.includes("테라스") ||
-      searchableText.includes("복층")
-    );
-  }
-
-  return searchableText.includes(feature.toLowerCase());
-}
-
-function matchesRoomGroup(
-  row: PropertyRow,
-  roomsGroup?: string,
-): boolean {
-  if (!roomsGroup) return true;
-
-  const roomCount = Number(row.rooms);
-
-  if (!Number.isFinite(roomCount)) return false;
-
-  if (roomsGroup === "1-2") {
-    return roomCount >= 1 && roomCount <= 2;
-  }
-
-  if (roomsGroup === "3-4") {
-    return roomCount >= 3 && roomCount <= 4;
-  }
-
-  return true;
-}
-
-async function getBySideFilter({
-  deposit,
-  depositMax,
-  propertyType,
-  roomsGroup,
-  feature,
-}: {
-  deposit?: string;
-  depositMax?: string;
-  propertyType?: string;
-  roomsGroup?: string;
-  feature?: string;
-}): Promise<Property[]> {
-  let query = supabase
-    .from("properties")
-    .select("*")
-    .eq("status", "공개");
-
-  if (feature === "급매물") {
-    query = query.eq("is_urgent", true);
-  }
-
-  const { data, error } = await query
-    .order("id", { ascending: false })
-    .limit(300);
-
-  if (error) {
-    console.error("[홈 사이드 필터] 매물 불러오기 오류:", error);
-    return [];
-  }
-
-  const depositMaximum = depositMax
-    ? Number(depositMax)
-    : null;
-
-  const filteredRows = ((data ?? []) as PropertyRow[]).filter(
-    (row) => {
-      const depositAmount = parseKoreanMoney(row.deposit);
-
-      if (deposit === "0" && depositAmount !== 0) {
-        return false;
-      }
-
-      if (
-        depositMaximum !== null &&
-        (!Number.isFinite(depositAmount) ||
-          depositAmount === null ||
-          depositAmount > depositMaximum)
-      ) {
-        return false;
-      }
-
-      if (!matchesRoomGroup(row, roomsGroup)) {
-        return false;
-      }
-
-      if (!matchesPropertyType(row, propertyType)) {
-        return false;
-      }
-
-      if (
-        feature !== "급매물" &&
-        !matchesFeature(row, feature)
-      ) {
-        return false;
-      }
-
-      return true;
-    },
-  );
-
-  return filteredRows.slice(0, FILTER_LIMIT).map(toProperty);
-}
-
-async function getPageSettings(): Promise<Record<string, PageSetting>> {
-  const { data, error } = await supabaseAdmin
-    .from("page_settings")
-    .select("page_key, title, description, is_visible");
-
-  if (error) {
-    console.error(
-      "[홈] page_settings 불러오기 실패:",
-      error.message,
-    );
-
-    return {};
-  }
-
-  const settings = (data ?? []) as PageSetting[];
-
-  console.log("[홈] page_settings:", settings);
-
-  return Object.fromEntries(
-    settings.map((item) => [
-      item.page_key,
-      item,
-    ]),
-  );
-}
-
-function pageTitle(
-  settings: Record<string, PageSetting>,
-  key: string,
-  fallback: string,
-) {
-  return settings[key]?.title?.trim() || fallback;
-}
-
-function pageVisible(
-  settings: Record<string, PageSetting>,
-  key: string,
-) {
-  return settings[key]?.is_visible !== false;
-}
-
 export default async function Home({
   searchParams,
 }: {
   searchParams?: Promise<HomeSearchParams>;
 }) {
   const resolvedSearchParams = searchParams ? await searchParams : {};
-
-  const pageSettings = await getPageSettings();
-
   const selectedCity = resolvedSearchParams.city?.trim() || "";
   const selectedDistrict = resolvedSearchParams.district?.trim() || "";
   const selectedNeighborhood =
     resolvedSearchParams.neighborhood?.trim() || "";
 
-  const selectedDeposit =
-    resolvedSearchParams.deposit?.trim() || "";
-  const selectedDepositMax =
-    resolvedSearchParams.deposit_max?.trim() || "";
-  const selectedPropertyType =
-    resolvedSearchParams.property_type?.trim() || "";
-  const selectedRoomsGroup =
-    resolvedSearchParams.rooms_group?.trim() || "";
-  const selectedFeature =
-    resolvedSearchParams.feature?.trim() || "";
-
   const hasRegionFilter = Boolean(selectedCity);
-  const hasSideFilter = Boolean(
-    selectedDeposit ||
-      selectedDepositMax ||
-      selectedPropertyType ||
-      selectedRoomsGroup ||
-      selectedFeature,
-  );
-
   const neighborhoods = getNeighborhoods(
     selectedCity,
     selectedDistrict,
@@ -407,14 +150,6 @@ export default async function Home({
       selectedDistrict || undefined,
       selectedNeighborhood || undefined,
     );
-  } else if (hasSideFilter) {
-    filteredProperties = await getBySideFilter({
-      deposit: selectedDeposit || undefined,
-      depositMax: selectedDepositMax || undefined,
-      propertyType: selectedPropertyType || undefined,
-      roomsGroup: selectedRoomsGroup || undefined,
-      feature: selectedFeature || undefined,
-    });
   } else {
     [seoul, gyeonggi, incheon, lowDeposit] = await Promise.all([
       getByCity("서울"),
@@ -429,6 +164,12 @@ export default async function Home({
     .filter(Boolean)
     .join(" ");
 
+  const filteredTitle = selectedNeighborhood
+    ? `${selectedNeighborhood} 매물정보`
+    : selectedDistrict
+      ? `${selectedDistrict} 매물정보`
+      : `${cityLabel} 매물정보`;
+
   const districtBaseHref =
     selectedCity && selectedDistrict
       ? `/?city=${encodeURIComponent(
@@ -436,78 +177,38 @@ export default async function Home({
         )}&district=${encodeURIComponent(selectedDistrict)}`
       : "/";
 
-  const seoulTitle = pageTitle(
-    pageSettings,
-    "seoul",
-    "서울분양정보",
-  );
-
-  const gyeonggiTitle = pageTitle(
-    pageSettings,
-    "gyeonggi",
-    "경기분양정보",
-  );
-
-  const incheonTitle = pageTitle(
-    pageSettings,
-    "incheon",
-    "인천분양정보",
-  );
-
-  const urgentTitle = pageTitle(
-    pageSettings,
-    "urgent",
-    "급매물분양",
-  );
-
-  const lowDepositTitle = pageTitle(
-    pageSettings,
-    "low_deposit",
-    "낮은실입주금",
-  );
-
-  const selectedCityKey =
-    selectedCity === "서울"
-      ? "seoul"
-      : selectedCity === "경기"
-        ? "gyeonggi"
-        : selectedCity === "인천"
-          ? "incheon"
-          : "";
-
-  const regionDisplayTitle =
-    !selectedDistrict && selectedCityKey
-      ? pageTitle(
-          pageSettings,
-          selectedCityKey,
-          regionHeading,
-        )
-      : regionHeading;
-
-  const sideFilterTitle =
-    selectedFeature === "급매물"
-      ? urgentTitle
-      : selectedDepositMax === "5000"
-        ? lowDepositTitle
-        : "매물정보";
-
   return (
     <>
-      <Header />
+      <div className="dy-desktop-header-only">
+        <Header />
+      </div>
+
+      <section className="dy-mobile-home-top">
+        <div className="dy-mobile-home-brand">
+          <img src="/dy-logo-transparent.png" alt="DY다이아부동산" />
+        </div>
+
+        <nav className="dy-mobile-home-menu" aria-label="모바일 메인 메뉴">
+          <Link href="/?city=서울">서울분양정보</Link>
+          <Link href="/?city=경기">경기분양정보</Link>
+          <Link href="/?city=인천">인천분양정보</Link>
+          <Link href="/?feature=급매물">급매물분양</Link>
+          <Link href="/inquiry">문의게시판</Link>
+          <Link href="/reviews">고객후기</Link>
+        </nav>
+      </section>
 
       <MainBannerSlider />
 
-      {pageVisible(pageSettings, "reviews") && (
-        <section className="km-home-review-row">
-          <div className="km-home-review-content">
-            <ReviewsSection />
-          </div>
+      <section className="km-home-review-row">
+        <div className="km-home-review-content">
+          <ReviewsSection />
+        </div>
 
-          <div className="km-home-quick-consult">
-            <QuickConsultCard />
-          </div>
-        </section>
-      )}
+        <div className="km-home-quick-consult">
+          <QuickConsultCard />
+        </div>
+      </section>
 
       <main className="km-home-layout">
         <aside className="km-home-left-column">
@@ -522,12 +223,12 @@ export default async function Home({
           {hasRegionFilter ? (
             <>
               <section className="dy-region-location-panel">
-                <h2>{regionDisplayTitle}</h2>
+                <h2>{regionHeading}</h2>
 
                 {selectedDistrict && neighborhoods.length > 0 ? (
                   <nav
                     className="dy-neighborhood-grid"
-                    aria-label={`${regionDisplayTitle} 동 선택`}
+                    aria-label={`${regionHeading} 동 선택`}
                   >
                     <Link
                       href={districtBaseHref}
@@ -558,49 +259,35 @@ export default async function Home({
               </section>
 
               <PropertySection
-                title={regionDisplayTitle}
+                title={filteredTitle}
+                city={selectedCity}
                 properties={filteredProperties}
-                variant="regional-list"
               />
             </>
-          ) : hasSideFilter ? (
-            <PropertySection
-              title={sideFilterTitle}
-              properties={filteredProperties}
-              variant="regional-list"
-            />
           ) : (
             <>
-              {pageVisible(pageSettings, "seoul") && (
-                <PropertySection
-                  title={seoulTitle}
-                  city="서울"
-                  properties={seoul}
-                />
-              )}
+              <PropertySection
+                title="서울분양정보"
+                city="서울"
+                properties={seoul}
+              />
 
-              {pageVisible(pageSettings, "gyeonggi") && (
-                <PropertySection
-                  title={gyeonggiTitle}
-                  city="경기"
-                  properties={gyeonggi}
-                />
-              )}
+              <PropertySection
+                title="경기분양정보"
+                city="경기"
+                properties={gyeonggi}
+              />
 
-              {pageVisible(pageSettings, "incheon") && (
-                <PropertySection
-                  title={incheonTitle}
-                  city="인천"
-                  properties={incheon}
-                />
-              )}
+              <PropertySection
+                title="인천분양정보"
+                city="인천"
+                properties={incheon}
+              />
 
-              {pageVisible(pageSettings, "low_deposit") && (
-                <PropertySection
-                  title={lowDepositTitle}
-                  properties={lowDeposit}
-                />
-              )}
+              <PropertySection
+                title="낮은실입주금"
+                properties={lowDeposit}
+              />
             </>
           )}
         </section>
@@ -613,6 +300,106 @@ export default async function Home({
       <Footer />
 
       <style>{`
+
+        .dy-mobile-home-top { display: none; }
+
+        @media (max-width: 760px) {
+          .dy-desktop-header-only { display: none !important; }
+
+          .dy-mobile-home-top {
+            display: block !important;
+            width: 100%;
+            background: #fff;
+          }
+
+          .dy-mobile-home-brand {
+            min-height: 118px;
+            padding: 14px 16px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #dedede;
+            background: #fff;
+            box-sizing: border-box;
+          }
+
+          .dy-mobile-home-brand img {
+            width: 225px;
+            max-width: 72vw;
+            height: 92px;
+            object-fit: contain;
+          }
+
+          .dy-mobile-home-menu {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            border-top: 1px solid #dedede;
+            border-left: 1px solid #dedede;
+            background: #fff;
+          }
+
+          .dy-mobile-home-menu a {
+            min-width: 0;
+            height: 57px;
+            padding: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #dedede;
+            border-bottom: 1px solid #dedede;
+            color: #111;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+            text-align: center;
+            white-space: nowrap;
+            box-sizing: border-box;
+          }
+
+          .km-home-review-row {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 18px 15px 20px !important;
+            display: block !important;
+            grid-template-columns: minmax(0, 1fr) !important;
+            box-sizing: border-box !important;
+          }
+
+          .km-home-review-content {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+          }
+
+          .km-home-quick-consult { display: none !important; }
+
+          .km-home-layout {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 15px 44px !important;
+            display: block !important;
+            box-sizing: border-box !important;
+          }
+
+          .km-home-left-column,
+          .km-home-right-column {
+            display: none !important;
+          }
+
+          .km-home-center-column,
+          .km-home-search-wrap {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+          }
+
+          .km-home-search-wrap { margin-top: 0 !important; }
+          .dy-region-location-panel { margin-top: 18px !important; }
+        }
+
         .dy-region-location-panel {
           margin: 18px 0 16px;
         }
@@ -662,40 +449,6 @@ export default async function Home({
 
           .dy-neighborhood-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
-          }
-
-          .km-home-review-row {
-            width: calc(100% - 30px);
-            max-width: calc(100% - 30px);
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-            grid-template-columns: 1fr;
-          }
-
-          .km-home-review-content {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-          }
-
-          .km-home-quick-consult {
-            display: none;
-          }
-
-          .km-home-layout {
-            width: calc(100% - 30px);
-            max-width: calc(100% - 30px);
-            margin-left: auto;
-            margin-right: auto;
-            grid-template-columns: minmax(0, 1fr);
-          }
-
-          .km-home-center-column,
-          .km-home-search-wrap {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
           }
         }
       `}</style>

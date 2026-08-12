@@ -29,29 +29,24 @@ export default function MainBannerSlider({
     setActiveIndex((current) => (current + 1) % BANNERS.length);
   }, []);
 
-
   useEffect(() => {
     if (isPaused || BANNERS.length < 2) return;
-
     const timer = window.setInterval(moveNext, AUTOPLAY_DELAY);
-
-    return () => {
-      window.clearInterval(timer);
-    };
+    return () => window.clearInterval(timer);
   }, [isPaused, moveNext]);
 
   return (
     <section
-      className="km-main-gift-banner km-main-banner-slider dy26-main-banner"
+      className="km-main-gift-banner km-main-banner-slider dy-mobile-ref-banner"
       aria-label="프로모션 배너"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="km-main-banner-track dy26-main-banner-track">
+      <div className="km-main-banner-track dy-mobile-ref-banner-track">
         {BANNERS.map((banner, index) => (
           <div
             key={banner.src}
-            className={`km-main-banner-slide dy26-main-banner-slide${
+            className={`km-main-banner-slide dy-mobile-ref-banner-slide${
               index === activeIndex ? " is-active" : ""
             }`}
             aria-hidden={index !== activeIndex}
@@ -61,69 +56,57 @@ export default function MainBannerSlider({
         ))}
       </div>
 
-
       <style jsx>{`
-        .dy26-main-banner {
-          position: relative;
-        }
-
+        .dy-mobile-ref-banner { position: relative; }
 
         @media (max-width: 760px) {
-          .dy26-main-banner {
-            width: calc(100% - 30px) !important;
-            max-width: calc(100% - 30px) !important;
+          .dy-mobile-ref-banner {
+            position: relative !important;
+            width: 100% !important;
+            max-width: 100% !important;
             height: auto !important;
             min-height: 0 !important;
-            margin: 16px auto 22px !important;
+            margin: 0 !important;
+            padding: 0 !important;
             overflow: hidden !important;
             background: #fff !important;
-            box-sizing: border-box !important;
           }
 
-          .dy26-main-banner-track {
+          .dy-mobile-ref-banner-track {
             position: relative !important;
             width: 100% !important;
             height: auto !important;
             min-height: 0 !important;
-            aspect-ratio: 16 / 9 !important;
-            overflow: hidden !important;
-            background: #fff !important;
           }
 
-          .dy26-main-banner-slide {
-            position: absolute !important;
-            inset: 0 !important;
+          .dy-mobile-ref-banner-slide {
+            position: static !important;
             display: none !important;
             width: 100% !important;
-            height: 100% !important;
+            height: auto !important;
             min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
             opacity: 1 !important;
             visibility: visible !important;
             transform: none !important;
-            overflow: hidden !important;
-            background: #fff !important;
           }
 
-          .dy26-main-banner-slide.is-active {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+          .dy-mobile-ref-banner-slide.is-active {
+            display: block !important;
           }
 
-          .dy26-main-banner-slide img {
+          .dy-mobile-ref-banner-slide img {
             position: static !important;
             width: 100% !important;
             max-width: 100% !important;
-            height: 100% !important;
-            max-height: 100% !important;
-            min-height: 0 !important;
+            height: auto !important;
+            max-height: none !important;
             display: block !important;
             object-fit: contain !important;
             object-position: center center !important;
             transform: none !important;
-            margin: 0 auto !important;
           }
-
         }
       `}</style>
     </section>
