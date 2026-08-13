@@ -21,13 +21,10 @@ export default function NoImagePlaceholder({
       <style jsx>{`
         .dy-no-image {
           position: relative;
-
           width: 100%;
           height: 100%;
           min-height: 180px;
-
           overflow: hidden;
-
           background: #090909;
         }
 
@@ -39,9 +36,8 @@ export default function NoImagePlaceholder({
 
           transform: translate(-50%, -50%) !important;
 
-          /* 사진 있는 상세페이지와 완전히 동일 */
-          width: 180px !important;
-          height: 180px !important;
+          width: 200px !important;
+          height: 200px !important;
 
           max-width: 28% !important;
           max-height: 50% !important;
@@ -81,7 +77,6 @@ export default function NoImagePlaceholder({
           }
 
           .dy-no-image-watermark-box {
-            /* 사진 있는 상세페이지 모바일과 완전히 동일 */
             width: 120px !important;
             height: 120px !important;
 
