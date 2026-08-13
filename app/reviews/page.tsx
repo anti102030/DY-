@@ -506,11 +506,17 @@ export default async function ReviewsPage({
           pointer-events: none;
         }
 
+        .dy-fixed-promo-card {
+          background: #111;
+        }
+
         .dy-fixed-promo-card img {
           width: 100%;
           height: 313px;
           display: block;
-          object-fit: cover;
+          object-fit: contain;
+          object-position: center;
+          background: #111;
         }
 
         .dy-fixed-promo-card > div {
