@@ -372,14 +372,7 @@ export default async function ReviewDetailPage({
                               "고객후기"
                             }
                           />
-                          <span className="dy-review-related-watermark-box">
-                            <img
-                              src="/dy-watermark.png"
-                              alt=""
-                              aria-hidden="true"
-                              draggable={false}
-                            />
-                          </span>
+                          <BrandWatermark className="dy-review-related-watermark" />
                         </span>
 
                         <div>
@@ -1180,37 +1173,20 @@ export default async function ReviewDetailPage({
           object-fit: cover;
         }
 
-        .dy-review-related-watermark-box {
+        .dy-review-related-watermark-wrap .dy-review-related-watermark {
           position: absolute !important;
           top: 50% !important;
           left: 50% !important;
-          transform: translate(-50%, -50%) !important;
-
           width: 42% !important;
-          height: 42% !important;
-          max-width: 110px !important;
-          max-height: 110px !important;
-
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-
+          max-width: 230px !important;
+          height: auto !important;
+          aspect-ratio: auto !important;
+          transform: translate(-50%, -50%) !important;
+          object-fit: contain !important;
           opacity: 0.34 !important;
           pointer-events: none !important;
           user-select: none !important;
           z-index: 4 !important;
-        }
-
-        .dy-review-related-watermark-box > img {
-          display: block !important;
-          width: 100% !important;
-          height: 100% !important;
-          max-width: 100% !important;
-          max-height: 100% !important;
-          aspect-ratio: auto !important;
-          object-fit: contain !important;
-          margin: 0 !important;
-          padding: 0 !important;
         }
 
         @media (max-width: 760px) {
@@ -1220,11 +1196,11 @@ export default async function ReviewDetailPage({
             opacity: 0.38;
           }
 
-          .dy-review-related-watermark-box {
+          .dy-review-related-watermark-wrap .dy-review-related-watermark {
             width: 46% !important;
-            height: 46% !important;
-            max-width: 105px !important;
-            max-height: 105px !important;
+            max-width: 230px !important;
+            height: auto !important;
+            aspect-ratio: auto !important;
             opacity: 0.38 !important;
           }
         }
