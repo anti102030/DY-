@@ -294,7 +294,7 @@ export default function ReviewsSection() {
 
         .dy26-review-track {
           display: flex;
-          align-items: stretch;
+          align-items: flex-start;
           gap: 12px;
           will-change: transform;
         }
@@ -302,10 +302,11 @@ export default function ReviewsSection() {
         .dy26-review-card {
           width: calc((100% - 48px) / 5);
           flex: 0 0 calc((100% - 48px) / 5);
+          height: 132px;
           display: block;
           overflow: hidden;
           border: 1px solid #d8d8d8;
-          background: #eee;
+          background: #111;
           box-sizing: border-box;
           text-decoration: none;
         }
@@ -317,7 +318,7 @@ export default function ReviewsSection() {
         .dy26-review-image-wrap {
           position: relative;
           width: 100%;
-          height: 132px;
+          height: 100%;
           overflow: hidden;
           background: #111;
         }
@@ -360,8 +361,12 @@ export default function ReviewsSection() {
          * PC와 같은 132px 유지
          */
         @media (max-width: 1100px) and (min-width: 761px) {
-          .dy26-review-image-wrap {
+          .dy26-review-card {
             height: 132px;
+          }
+
+          .dy26-review-image-wrap {
+            height: 100%;
           }
         }
 
@@ -419,6 +424,7 @@ export default function ReviewsSection() {
             min-width: 100% !important;
             max-width: 100% !important;
             flex: 0 0 100% !important;
+            height: auto !important;
             aspect-ratio: 16 / 9 !important;
           }
 
