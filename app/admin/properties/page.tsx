@@ -82,7 +82,7 @@ export default async function AdminPropertiesPage() {
               <tr key={property.id}>
                 <td>{property.id}</td>
 
-                <td>
+                <td className="admin-photo-cell">
                   {property.thumbnail_url ? (
                     <img
                       src={property.thumbnail_url}
@@ -90,19 +90,7 @@ export default async function AdminPropertiesPage() {
                       className="admin-thumb"
                     />
                   ) : (
-                    <div
-                      style={{
-                        width: 80,
-                        height: 60,
-                        border: "1px solid #ddd",
-                        background: "#f5f5f5",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 12,
-                        color: "#777",
-                      }}
-                    >
+                    <div className="admin-thumb-placeholder">
                       사진 없음
                     </div>
                   )}
@@ -253,6 +241,17 @@ export default async function AdminPropertiesPage() {
           background: #fafafa;
         }
 
+        /*
+         * 사진 열은 모든 행에서 동일한 기준으로 정렬
+         */
+        .admin-photo-cell {
+          text-align: center !important;
+          vertical-align: middle !important;
+        }
+
+        /*
+         * 실제 사진
+         */
         .admin-thumb {
           display: block;
           width: 80px;
@@ -260,6 +259,29 @@ export default async function AdminPropertiesPage() {
           margin: 0 auto;
           object-fit: cover;
           border: 1px solid #eee;
+          box-sizing: border-box;
+        }
+
+        /*
+         * 사진 없음
+         * 실제 사진과 동일한 80x60 박스 + 동일한 중앙 위치
+         */
+        .admin-thumb-placeholder {
+          width: 80px;
+          height: 60px;
+          margin: 0 auto;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          border: 1px solid #ddd;
+          background: #f5f5f5;
+
+          color: #777;
+          font-size: 12px;
+
+          box-sizing: border-box;
         }
 
         .admin-action-buttons {
