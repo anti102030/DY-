@@ -91,7 +91,6 @@ export default function DetailGallery({ images, title }: Props) {
             <img src={selectedImage} alt={title} />
           </button>
 
-          {/* 상세페이지 워터마크 */}
           <div className="dy-detail-watermark-box">
             <img
               src="/dy-watermark.png"
@@ -147,7 +146,6 @@ export default function DetailGallery({ images, title }: Props) {
           <div className="dy-gallery-modal-image-wrap">
             <img src={selectedImage} alt={title} />
 
-            {/* 확대사진 워터마크 */}
             <div className="dy-modal-watermark-box">
               <img
                 src="/dy-watermark.png"
@@ -183,43 +181,30 @@ export default function DetailGallery({ images, title }: Props) {
           overflow: hidden !important;
         }
 
-        /*
-         * 중요:
-         * 워터마크 img에 직접 크기를 주지 않고
-         * 이 박스의 크기를 제한한다.
-         */
         .dy-detail-watermark-box {
           position: absolute !important;
-
           top: 50% !important;
           left: 50% !important;
-
           transform: translate(-50%, -50%) !important;
 
-          width: 150px !important;
-          height: 150px !important;
+          width: 180px !important;
+          height: 180px !important;
 
-          max-width: 24% !important;
-          max-height: 45% !important;
+          max-width: 28% !important;
+          max-height: 50% !important;
 
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
 
           overflow: visible !important;
-
           opacity: 0.3 !important;
 
           pointer-events: none !important;
           user-select: none !important;
-
           z-index: 50 !important;
         }
 
-        /*
-         * 기존 상세페이지 img CSS가 width:100%를 걸어도
-         * 150px 박스 안에서만 100%가 된다.
-         */
         .dy-detail-watermark-box > img {
           display: block !important;
 
@@ -257,29 +242,25 @@ export default function DetailGallery({ images, title }: Props) {
 
         .dy-modal-watermark-box {
           position: absolute !important;
-
           top: 50% !important;
           left: 50% !important;
-
           transform: translate(-50%, -50%) !important;
 
-          width: 170px !important;
-          height: 170px !important;
+          width: 200px !important;
+          height: 200px !important;
 
-          max-width: 22% !important;
-          max-height: 45% !important;
+          max-width: 26% !important;
+          max-height: 50% !important;
 
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
 
           overflow: visible !important;
-
           opacity: 0.3 !important;
 
           pointer-events: none !important;
           user-select: none !important;
-
           z-index: 50 !important;
         }
 
