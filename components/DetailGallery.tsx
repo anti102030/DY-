@@ -14,7 +14,6 @@ function isRealImage(image: string) {
 
   if (!value) return false;
 
-  // 상세페이지에서 사진이 없을 때 사용하는 SVG 임시 이미지 제외
   if (value.startsWith("data:image/svg+xml")) return false;
 
   return true;
@@ -163,27 +162,21 @@ export default function DetailGallery({ images, title }: Props) {
           overflow: hidden;
         }
 
-        /* 상세페이지 메인 사진 영역 */
         .dy-detail-image-wrap {
           position: relative !important;
           overflow: hidden !important;
         }
 
-        /* 상세페이지 메인사진 워터마크 */
         :global(.dy-detail-photo-watermark) {
           position: absolute !important;
-
           top: 50% !important;
           left: 50% !important;
 
           width: 18% !important;
           max-width: 150px !important;
-
           height: auto !important;
-          max-height: 70% !important;
 
           transform: translate(-50%, -50%) !important;
-
           object-fit: contain !important;
 
           opacity: 0.3 !important;
@@ -194,43 +187,33 @@ export default function DetailGallery({ images, title }: Props) {
           z-index: 20 !important;
         }
 
-        /* 사진 확대 영역 */
         .dy-gallery-modal-image-wrap {
-          position: relative !important;
-
+          position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-
           max-width: 90vw;
           max-height: 90vh;
         }
 
         .dy-gallery-modal-image-wrap > img {
           display: block;
-
           max-width: 90vw;
           max-height: 90vh;
-
           object-fit: contain;
         }
 
-        /* 확대했을 때 워터마크 */
         .dy-gallery-modal-image-wrap
           :global(.dy-modal-photo-watermark) {
           position: absolute !important;
-
           top: 50% !important;
           left: 50% !important;
 
           width: 18% !important;
           max-width: 170px !important;
-
           height: auto !important;
-          max-height: 70% !important;
 
           transform: translate(-50%, -50%) !important;
-
           object-fit: contain !important;
 
           opacity: 0.3 !important;
@@ -241,15 +224,11 @@ export default function DetailGallery({ images, title }: Props) {
           z-index: 20 !important;
         }
 
-        /* 모바일 */
         @media (max-width: 760px) {
           :global(.dy-detail-photo-watermark) {
             width: 22% !important;
             max-width: 130px !important;
-
             height: auto !important;
-            max-height: 65% !important;
-
             opacity: 0.34 !important;
           }
 
@@ -257,13 +236,11 @@ export default function DetailGallery({ images, title }: Props) {
             :global(.dy-modal-photo-watermark) {
             width: 22% !important;
             max-width: 150px !important;
-
             height: auto !important;
-            max-height: 65% !important;
-
             opacity: 0.34 !important;
           }
         }
       `}</style>
     </>
   );
+}
