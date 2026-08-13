@@ -584,7 +584,7 @@ export default async function ReviewsPage({
           overflow: hidden;
         }
 
-        .dy-review-card img {
+        .dy-review-watermark-image > img {
           width: 100%;
           aspect-ratio: 1 / 1;
           display: block;
@@ -830,8 +830,9 @@ export default async function ReviewsPage({
         .dy-review-watermark-image > img {
           display: block;
           width: 100%;
-          height: 100%;
+          aspect-ratio: 1 / 1;
           object-fit: cover;
+          background: #f3f3f3;
         }
 
         .dy-review-watermark-empty {
@@ -848,22 +849,28 @@ export default async function ReviewsPage({
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 42%;
-          max-width: 230px;
-          height: auto;
-          transform: translate(-50%, -50%);
-          object-fit: contain;
-          opacity: 0.34;
-          pointer-events: none;
-          user-select: none;
-          z-index: 4;
+          width: 48% !important;
+          max-width: 250px !important;
+          height: auto !important;
+          aspect-ratio: auto !important;
+          transform: translate(-50%, -50%) !important;
+          object-fit: contain !important;
+          background: transparent !important;
+          opacity: 0.52 !important;
+          pointer-events: none !important;
+          user-select: none !important;
+          z-index: 10 !important;
         }
 
         @media (max-width: 760px) {
           .dy-review-watermark-image .dy-review-page-watermark,
           .dy-review-watermark-empty .dy-review-page-watermark {
-            width: 46%;
-            opacity: 0.38;
+            width: 52% !important;
+            max-width: 250px !important;
+            height: auto !important;
+            aspect-ratio: auto !important;
+            background: transparent !important;
+            opacity: 0.56 !important;
           }
         }
       `}</style>
