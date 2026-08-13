@@ -384,7 +384,7 @@ export default async function PropertyDetailPage({
                 leftLabel="소재지"
                 leftValue={property.address}
                 rightLabel="주차대수"
-                rightValue="-"
+                rightValue={property.parking_count || "-"}
               />
 
               <InfoRow
@@ -407,7 +407,7 @@ export default async function PropertyDetailPage({
                 leftLabel="층정보"
                 leftValue={property.floor}
                 rightLabel="엘리베이터"
-                rightValue="-"
+                rightValue={property.elevator || "-"}
               />
 
               <InfoRow
@@ -419,30 +419,30 @@ export default async function PropertyDetailPage({
 
               <InfoRow
                 leftLabel="베란다/발코니"
-                leftValue="-"
+                leftValue={property.balcony || "-"}
                 rightLabel="빌트인"
-                rightValue="-"
+                rightValue={property.built_in || "-"}
               />
 
               <InfoRow
                 leftLabel="입주가능일"
                 leftValue={property.move_in_status}
                 rightLabel="세대수"
-                rightValue="-"
+                rightValue={property.household_count || "-"}
               />
 
               <InfoRow
                 leftLabel="편의시설"
-                leftValue="-"
+                leftValue={property.amenities || "-"}
                 rightLabel="교육시설"
-                rightValue="-"
+                rightValue={property.education_facilities || "-"}
               />
 
               <InfoRow
                 leftLabel="인근지하철"
-                leftValue="-"
+                leftValue={property.nearby_subway || "-"}
                 rightLabel="역과의거리"
-                rightValue="-"
+                rightValue={property.station_distance || "-"}
               />
             </div>
           </section>

@@ -47,11 +47,19 @@ export async function PATCH(
         move_in_status: String(body.move_in_status ?? "").trim(),
         deposit: String(body.deposit ?? "").trim(),
         loan: String(body.loan ?? "").trim(),
+        balcony: String(body.balcony ?? "").trim(),
+        amenities: String(body.amenities ?? "").trim(),
+        nearby_subway: String(body.nearby_subway ?? "").trim(),
+        education_facilities: String(body.education_facilities ?? "").trim(),
+        household_count: String(body.household_count ?? "").trim(),
+        station_distance: String(body.station_distance ?? "").trim(),
+        built_in: String(body.built_in ?? "").trim(),
+        parking_count: String(body.parking_count ?? "").trim(),
+        elevator: String(body.elevator ?? "").trim(),
         thumbnail_url: String(body.thumbnail_url ?? ""),
         image_urls: Array.isArray(body.image_urls)
           ? body.image_urls
           : [],
-        description: String(body.description ?? "").trim(),
         status: body.status === "숨김" ? "숨김" : "공개",
       })
       .eq("id", propertyId);

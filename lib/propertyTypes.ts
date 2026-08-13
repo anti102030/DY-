@@ -22,5 +22,14 @@ export type PropertyRow = {
   image_urls: string[];
   deposit: string;
   loan: string;
+  balcony: string;
+  amenities: string;
+  nearby_subway: string;
+  education_facilities: string;
+  household_count: string;
+  station_distance: string;
+  built_in: string;
+  parking_count: string;
+  elevator: string;
   status: "공개" | "숨김";
 };

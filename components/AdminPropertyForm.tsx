@@ -23,7 +23,15 @@ type FormState = {
   move_in_status: string;
   deposit: string;
   loan: string;
-  description: string;
+  balcony: string;
+  amenities: string;
+  nearby_subway: string;
+  education_facilities: string;
+  household_count: string;
+  station_distance: string;
+  built_in: string;
+  parking_count: string;
+  elevator: string;
   status: "공개" | "숨김";
 };
 
@@ -52,7 +60,15 @@ const initialForm: FormState = {
   move_in_status: "즉시입주",
   deposit: "",
   loan: "",
-  description: "",
+  balcony: "",
+  amenities: "",
+  nearby_subway: "",
+  education_facilities: "",
+  household_count: "",
+  station_distance: "",
+  built_in: "",
+  parking_count: "",
+  elevator: "",
   status: "공개",
 };
 
@@ -157,7 +173,8 @@ export default function AdminPropertyForm() {
       setMessage("");
     }
 
-    setImageFiles(imageOnly);
+    setImageFiles((current) => [...current, ...imageOnly]);
+    event.target.value = "";
   }
 
   function removeImage(index: number) {
@@ -208,9 +225,12 @@ export default function AdminPropertyForm() {
 
     setBulkItems((current) =>
       current.map((item) =>
-        item.id === itemId ? { ...item, imageFiles: imageOnly } : item
+        item.id === itemId
+          ? { ...item, imageFiles: [...item.imageFiles, ...imageOnly] }
+          : item
       )
     );
+    event.target.value = "";
   }
 
   function removeBulkImage(itemId: string, imageIndex: number) {
@@ -313,9 +333,18 @@ export default function AdminPropertyForm() {
       move_in_status: currentForm.move_in_status.trim(),
       deposit: currentForm.deposit.trim(),
       loan: currentForm.loan.trim(),
+      balcony: currentForm.balcony.trim(),
+      amenities: currentForm.amenities.trim(),
+      nearby_subway: currentForm.nearby_subway.trim(),
+      education_facilities: currentForm.education_facilities.trim(),
+      household_count: currentForm.household_count.trim(),
+      station_distance: currentForm.station_distance.trim(),
+      built_in: currentForm.built_in.trim(),
+      parking_count: currentForm.parking_count.trim(),
+      elevator: currentForm.elevator.trim(),
       thumbnail_url: uploadedUrls[0],
       image_urls: uploadedUrls.slice(1),
-      description: currentForm.description.trim(),
+      description: "",
       status: currentForm.status,
     };
   }
@@ -335,10 +364,6 @@ export default function AdminPropertyForm() {
 
     if (!currentForm.address.trim()) {
       throw new Error(`${label}의 전체 주소를 입력해 주세요.`);
-    }
-
-    if (!currentForm.description.trim()) {
-      throw new Error(`${label}의 상세 설명을 입력해 주세요.`);
     }
 
     if (files.length === 0) {
@@ -638,7 +663,6 @@ export default function AdminPropertyForm() {
         <label className="admin-full">
           매물 사진
           <input
-            key={`${inputPrefix}-${currentImageFiles.length}`}
             type="file"
             accept="image/*"
             multiple
@@ -677,13 +701,96 @@ export default function AdminPropertyForm() {
           </div>
         )}
 
-        <label className="admin-full">
-          상세 설명
-          <textarea
-            name="description"
-            value={currentForm.description}
+        <label>
+          베란다/발코니
+          <input
+            name="balcony"
+            value={currentForm.balcony}
             onChange={onChange}
-            required
+            placeholder="예: 베란다 2개 / 테라스 있음"
+          />
+        </label>
+
+        <label>
+          주차대수
+          <input
+            name="parking_count"
+            value={currentForm.parking_count}
+            onChange={onChange}
+            placeholder="예: 1대 / 세대당 1.2대"
+          />
+        </label>
+
+        <label>
+          엘리베이터
+          <select
+            name="elevator"
+            value={currentForm.elevator}
+            onChange={onChange}
+          >
+            <option value="">선택</option>
+            <option value="있음">있음</option>
+            <option value="없음">없음</option>
+          </select>
+        </label>
+
+        <label>
+          세대수
+          <input
+            name="household_count"
+            value={currentForm.household_count}
+            onChange={onChange}
+            placeholder="예: 24세대"
+          />
+        </label>
+
+        <label>
+          빌트인
+          <input
+            name="built_in"
+            value={currentForm.built_in}
+            onChange={onChange}
+            placeholder="예: 냉장고, 세탁기, 시스템에어컨"
+          />
+        </label>
+
+        <label>
+          인근지하철
+          <input
+            name="nearby_subway"
+            value={currentForm.nearby_subway}
+            onChange={onChange}
+            placeholder="예: 가양역 9호선"
+          />
+        </label>
+
+        <label>
+          역과의거리
+          <input
+            name="station_distance"
+            value={currentForm.station_distance}
+            onChange={onChange}
+            placeholder="예: 도보 7분"
+          />
+        </label>
+
+        <label className="admin-full">
+          편의시설
+          <input
+            name="amenities"
+            value={currentForm.amenities}
+            onChange={onChange}
+            placeholder="예: 마트, 병원, 공원, 영화관"
+          />
+        </label>
+
+        <label className="admin-full">
+          교육시설
+          <input
+            name="education_facilities"
+            value={currentForm.education_facilities}
+            onChange={onChange}
+            placeholder="예: 초·중·고 도보권"
           />
         </label>
 

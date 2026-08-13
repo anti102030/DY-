@@ -24,7 +24,15 @@ type FormState = {
   move_in_status: string;
   deposit: string;
   loan: string;
-  description: string;
+  balcony: string;
+  amenities: string;
+  nearby_subway: string;
+  education_facilities: string;
+  household_count: string;
+  station_distance: string;
+  built_in: string;
+  parking_count: string;
+  elevator: string;
   status: "공개" | "숨김";
 };
 
@@ -74,7 +82,15 @@ export default function EditPropertyForm({
     move_in_status: property.move_in_status ?? "",
     deposit: property.deposit ?? "",
     loan: property.loan ?? "",
-    description: property.description ?? "",
+    balcony: property.balcony ?? "",
+    amenities: property.amenities ?? "",
+    nearby_subway: property.nearby_subway ?? "",
+    education_facilities: property.education_facilities ?? "",
+    household_count: property.household_count ?? "",
+    station_distance: property.station_distance ?? "",
+    built_in: property.built_in ?? "",
+    parking_count: property.parking_count ?? "",
+    elevator: property.elevator ?? "",
     status: property.status ?? "공개",
   });
 
@@ -242,9 +258,17 @@ export default function EditPropertyForm({
           move_in_status: form.move_in_status.trim(),
           deposit: form.deposit.trim(),
           loan: form.loan.trim(),
+          balcony: form.balcony.trim(),
+          amenities: form.amenities.trim(),
+          nearby_subway: form.nearby_subway.trim(),
+          education_facilities: form.education_facilities.trim(),
+          household_count: form.household_count.trim(),
+          station_distance: form.station_distance.trim(),
+          built_in: form.built_in.trim(),
+          parking_count: form.parking_count.trim(),
+          elevator: form.elevator.trim(),
           thumbnail_url: finalImages[0],
           image_urls: finalImages.slice(1),
-          description: form.description.trim(),
           status: form.status,
         }),
       });
@@ -536,13 +560,96 @@ export default function EditPropertyForm({
           </div>
         )}
 
-        <label className="admin-full">
-          상세 설명
-          <textarea
-            name="description"
-            value={form.description}
+        <label>
+          베란다/발코니
+          <input
+            name="balcony"
+            value={form.balcony}
             onChange={updateField}
-            required
+            placeholder="예: 베란다 2개 / 테라스 있음"
+          />
+        </label>
+
+        <label>
+          주차대수
+          <input
+            name="parking_count"
+            value={form.parking_count}
+            onChange={updateField}
+            placeholder="예: 1대 / 세대당 1.2대"
+          />
+        </label>
+
+        <label>
+          엘리베이터
+          <select
+            name="elevator"
+            value={form.elevator}
+            onChange={updateField}
+          >
+            <option value="">선택</option>
+            <option value="있음">있음</option>
+            <option value="없음">없음</option>
+          </select>
+        </label>
+
+        <label>
+          세대수
+          <input
+            name="household_count"
+            value={form.household_count}
+            onChange={updateField}
+            placeholder="예: 24세대"
+          />
+        </label>
+
+        <label>
+          빌트인
+          <input
+            name="built_in"
+            value={form.built_in}
+            onChange={updateField}
+            placeholder="예: 냉장고, 세탁기, 시스템에어컨"
+          />
+        </label>
+
+        <label>
+          인근지하철
+          <input
+            name="nearby_subway"
+            value={form.nearby_subway}
+            onChange={updateField}
+            placeholder="예: 가양역 9호선"
+          />
+        </label>
+
+        <label>
+          역과의거리
+          <input
+            name="station_distance"
+            value={form.station_distance}
+            onChange={updateField}
+            placeholder="예: 도보 7분"
+          />
+        </label>
+
+        <label className="admin-full">
+          편의시설
+          <input
+            name="amenities"
+            value={form.amenities}
+            onChange={updateField}
+            placeholder="예: 마트, 병원, 공원, 영화관"
+          />
+        </label>
+
+        <label className="admin-full">
+          교육시설
+          <input
+            name="education_facilities"
+            value={form.education_facilities}
+            onChange={updateField}
+            placeholder="예: 초·중·고 도보권"
           />
         </label>
 
