@@ -185,10 +185,11 @@ export default function DetailGallery({ images, title }: Props) {
           position: absolute !important;
           top: 50% !important;
           left: 50% !important;
+
           transform: translate(-50%, -50%) !important;
 
-          width: 200px !important;
-          height: 200px !important;
+          width: 250px !important;
+          height: 250px !important;
 
           max-width: 28% !important;
           max-height: 50% !important;
@@ -198,37 +199,47 @@ export default function DetailGallery({ images, title }: Props) {
           justify-content: center !important;
 
           overflow: visible !important;
+
           opacity: 0.3 !important;
 
           pointer-events: none !important;
           user-select: none !important;
+
           z-index: 50 !important;
         }
 
         .dy-detail-watermark-box > img {
           display: block !important;
+
           width: 100% !important;
           height: 100% !important;
+
           max-width: 100% !important;
           max-height: 100% !important;
+
           object-fit: contain !important;
+
           margin: 0 !important;
           padding: 0 !important;
         }
 
         .dy-gallery-modal-image-wrap {
           position: relative !important;
+
           display: flex;
           align-items: center;
           justify-content: center;
+
           max-width: 90vw;
           max-height: 90vh;
         }
 
         .dy-gallery-modal-image-wrap > img {
           display: block;
+
           max-width: 90vw;
           max-height: 90vh;
+
           object-fit: contain;
         }
 
@@ -236,10 +247,11 @@ export default function DetailGallery({ images, title }: Props) {
           position: absolute !important;
           top: 50% !important;
           left: 50% !important;
+
           transform: translate(-50%, -50%) !important;
 
-          width: 200px !important;
-          height: 200px !important;
+          width: 250px !important;
+          height: 250px !important;
 
           max-width: 26% !important;
           max-height: 50% !important;
@@ -249,20 +261,26 @@ export default function DetailGallery({ images, title }: Props) {
           justify-content: center !important;
 
           overflow: visible !important;
+
           opacity: 0.3 !important;
 
           pointer-events: none !important;
           user-select: none !important;
+
           z-index: 50 !important;
         }
 
         .dy-modal-watermark-box > img {
           display: block !important;
+
           width: 100% !important;
           height: 100% !important;
+
           max-width: 100% !important;
           max-height: 100% !important;
+
           object-fit: contain !important;
+
           margin: 0 !important;
           padding: 0 !important;
         }
@@ -271,16 +289,20 @@ export default function DetailGallery({ images, title }: Props) {
           .dy-detail-watermark-box {
             width: 120px !important;
             height: 120px !important;
+
             max-width: 26% !important;
             max-height: 42% !important;
+
             opacity: 0.34 !important;
           }
 
           .dy-modal-watermark-box {
             width: 130px !important;
             height: 130px !important;
+
             max-width: 26% !important;
             max-height: 42% !important;
+
             opacity: 0.34 !important;
           }
         }

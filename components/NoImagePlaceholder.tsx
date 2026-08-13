@@ -21,10 +21,13 @@ export default function NoImagePlaceholder({
       <style jsx>{`
         .dy-no-image {
           position: relative;
+
           width: 100%;
           height: 100%;
           min-height: 180px;
+
           overflow: hidden;
+
           background: #090909;
         }
 
@@ -36,8 +39,8 @@ export default function NoImagePlaceholder({
 
           transform: translate(-50%, -50%) !important;
 
-          width: 200px !important;
-          height: 200px !important;
+          width: 250px !important;
+          height: 250px !important;
 
           max-width: 28% !important;
           max-height: 50% !important;
