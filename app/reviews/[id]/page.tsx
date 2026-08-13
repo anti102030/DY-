@@ -930,17 +930,11 @@ export default async function ReviewDetailPage({
           overflow: hidden;
         }
 
-        .dy-review-related-card
-          img {
+        .dy-review-related-watermark-wrap > img {
           width: 100%;
-
-          aspect-ratio:
-            1.3 / 1;
-
+          aspect-ratio: 1.3 / 1;
           display: block;
-
           object-fit: cover;
-
           background: #eee;
         }
 
@@ -1170,23 +1164,30 @@ export default async function ReviewDetailPage({
           display: block;
           width: 100%;
           height: 100%;
+          aspect-ratio: 1.3 / 1;
           object-fit: cover;
+          background: #eee;
         }
 
         .dy-review-related-watermark-wrap .dy-review-related-watermark {
           position: absolute !important;
           top: 50% !important;
           left: 50% !important;
+
           width: 42% !important;
           max-width: 230px !important;
           height: auto !important;
           aspect-ratio: auto !important;
+
           transform: translate(-50%, -50%) !important;
           object-fit: contain !important;
+
+          background: transparent !important;
           opacity: 0.34 !important;
+
           pointer-events: none !important;
           user-select: none !important;
-          z-index: 4 !important;
+          z-index: 10 !important;
         }
 
         @media (max-width: 760px) {
@@ -1201,6 +1202,7 @@ export default async function ReviewDetailPage({
             max-width: 230px !important;
             height: auto !important;
             aspect-ratio: auto !important;
+            background: transparent !important;
             opacity: 0.38 !important;
           }
         }
