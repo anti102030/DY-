@@ -84,7 +84,7 @@ export default function DetailGallery({ images, title }: Props) {
   return (
     <>
       <div className="km-detail-gallery-box">
-        <div className="km-detail-main-image">
+        <div className="km-detail-main-image dy-detail-image-wrap">
           <button
             type="button"
             className="km-gallery-main-button"
@@ -163,65 +163,91 @@ export default function DetailGallery({ images, title }: Props) {
           overflow: hidden;
         }
 
+        /* 상세페이지 메인 사진 기준점 */
+        .dy-detail-image-wrap {
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* 상세페이지 메인 워터마크 */
         :global(.dy-detail-photo-watermark) {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 38%;
-          max-width: 360px;
+
+          width: 28%;
+          max-width: 240px;
           height: auto;
+
           transform: translate(-50%, -50%);
+
           object-fit: contain;
+
           opacity: 0.38;
+
           pointer-events: none;
           user-select: none;
+
           z-index: 7;
         }
 
+        /* 확대 이미지 영역 */
         .dy-gallery-modal-image-wrap {
           position: relative;
+
           display: flex;
           align-items: center;
           justify-content: center;
+
           max-width: 90vw;
           max-height: 90vh;
         }
 
         .dy-gallery-modal-image-wrap > img {
           display: block;
+
           max-width: 90vw;
           max-height: 90vh;
+
           object-fit: contain;
         }
 
+        /* 확대했을 때 워터마크 */
         .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 38%;
-          max-width: 420px;
+
+          width: 28%;
+          max-width: 300px;
           height: auto;
+
           transform: translate(-50%, -50%);
+
           object-fit: contain;
+
           opacity: 0.36;
+
           pointer-events: none;
           user-select: none;
+
           z-index: 3;
         }
 
         @media (max-width: 760px) {
           :global(.dy-detail-photo-watermark) {
-            width: 44%;
-            opacity: 0.42;
+            width: 32%;
+            max-width: 200px;
+            opacity: 0.4;
           }
 
           .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
-            width: 44%;
-            opacity: 0.40;
+            width: 32%;
+            max-width: 220px;
+            opacity: 0.38;
           }
         }
       `}</style>
-
     </>
   );
 }
