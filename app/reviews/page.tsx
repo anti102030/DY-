@@ -851,7 +851,7 @@ export default async function ReviewsPage({
         .dy-review-watermark-image .dy-review-page-watermark,
         .dy-review-watermark-empty .dy-review-page-watermark {
           position: absolute;
-          top: 45%;
+          top: 40%;
           left: 50%;
           width: 48% !important;
           max-width: 250px !important;
