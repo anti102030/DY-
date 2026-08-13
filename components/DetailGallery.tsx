@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import BrandWatermark from "@/components/BrandWatermark";
 import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 
 type Props = {
@@ -92,7 +91,15 @@ export default function DetailGallery({ images, title }: Props) {
             <img src={selectedImage} alt={title} />
           </button>
 
-          <BrandWatermark className="dy-detail-photo-watermark" />
+          {/* 상세페이지 워터마크 */}
+          <div className="dy-detail-watermark-box">
+            <img
+              src="/dy-watermark.png"
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+            />
+          </div>
         </div>
 
         {realImages.length > 1 && (
@@ -139,7 +146,16 @@ export default function DetailGallery({ images, title }: Props) {
 
           <div className="dy-gallery-modal-image-wrap">
             <img src={selectedImage} alt={title} />
-            <BrandWatermark className="dy-modal-photo-watermark" />
+
+            {/* 확대사진 워터마크 */}
+            <div className="dy-modal-watermark-box">
+              <img
+                src="/dy-watermark.png"
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
+            </div>
           </div>
 
           {realImages.length > 1 && (
@@ -167,76 +183,139 @@ export default function DetailGallery({ images, title }: Props) {
           overflow: hidden !important;
         }
 
-        :global(.dy-detail-photo-watermark) {
+        /*
+         * 중요:
+         * 워터마크 img에 직접 크기를 주지 않고
+         * 이 박스의 크기를 제한한다.
+         */
+        .dy-detail-watermark-box {
           position: absolute !important;
+
           top: 50% !important;
           left: 50% !important;
 
-          width: 18% !important;
-          max-width: 150px !important;
-          height: auto !important;
-
           transform: translate(-50%, -50%) !important;
-          object-fit: contain !important;
+
+          width: 150px !important;
+          height: 150px !important;
+
+          max-width: 24% !important;
+          max-height: 45% !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          overflow: visible !important;
 
           opacity: 0.3 !important;
 
           pointer-events: none !important;
           user-select: none !important;
 
-          z-index: 20 !important;
+          z-index: 50 !important;
+        }
+
+        /*
+         * 기존 상세페이지 img CSS가 width:100%를 걸어도
+         * 150px 박스 안에서만 100%가 된다.
+         */
+        .dy-detail-watermark-box > img {
+          display: block !important;
+
+          width: 100% !important;
+          height: 100% !important;
+
+          max-width: 100% !important;
+          max-height: 100% !important;
+
+          object-fit: contain !important;
+
+          margin: 0 !important;
+          padding: 0 !important;
         }
 
         .dy-gallery-modal-image-wrap {
-          position: relative;
+          position: relative !important;
+
           display: flex;
           align-items: center;
           justify-content: center;
+
           max-width: 90vw;
           max-height: 90vh;
         }
 
         .dy-gallery-modal-image-wrap > img {
           display: block;
+
           max-width: 90vw;
           max-height: 90vh;
+
           object-fit: contain;
         }
 
-        .dy-gallery-modal-image-wrap
-          :global(.dy-modal-photo-watermark) {
+        .dy-modal-watermark-box {
           position: absolute !important;
+
           top: 50% !important;
           left: 50% !important;
 
-          width: 18% !important;
-          max-width: 170px !important;
-          height: auto !important;
-
           transform: translate(-50%, -50%) !important;
-          object-fit: contain !important;
+
+          width: 170px !important;
+          height: 170px !important;
+
+          max-width: 22% !important;
+          max-height: 45% !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          overflow: visible !important;
 
           opacity: 0.3 !important;
 
           pointer-events: none !important;
           user-select: none !important;
 
-          z-index: 20 !important;
+          z-index: 50 !important;
+        }
+
+        .dy-modal-watermark-box > img {
+          display: block !important;
+
+          width: 100% !important;
+          height: 100% !important;
+
+          max-width: 100% !important;
+          max-height: 100% !important;
+
+          object-fit: contain !important;
+
+          margin: 0 !important;
+          padding: 0 !important;
         }
 
         @media (max-width: 760px) {
-          :global(.dy-detail-photo-watermark) {
-            width: 22% !important;
-            max-width: 130px !important;
-            height: auto !important;
+          .dy-detail-watermark-box {
+            width: 120px !important;
+            height: 120px !important;
+
+            max-width: 26% !important;
+            max-height: 42% !important;
+
             opacity: 0.34 !important;
           }
 
-          .dy-gallery-modal-image-wrap
-            :global(.dy-modal-photo-watermark) {
-            width: 22% !important;
-            max-width: 150px !important;
-            height: auto !important;
+          .dy-modal-watermark-box {
+            width: 130px !important;
+            height: 130px !important;
+
+            max-width: 26% !important;
+            max-height: 42% !important;
+
             opacity: 0.34 !important;
           }
         }
