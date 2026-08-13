@@ -839,17 +839,21 @@ export default async function ReviewsPage({
           background: #090909;
         }
 
+        /*
+         * 고객후기 목록 카드용 워터마크
+         * 메인 고객후기 슬라이드 / 서울분양정보 카드와 같은 작은 카드 기준
+         */
         .dy-review-watermark-image .dy-review-page-watermark,
         .dy-review-watermark-empty .dy-review-page-watermark {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 36%;
-          max-width: 210px;
+          width: 42%;
+          max-width: 230px;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.30;
+          opacity: 0.34;
           pointer-events: none;
           user-select: none;
           z-index: 4;
@@ -858,8 +862,8 @@ export default async function ReviewsPage({
         @media (max-width: 760px) {
           .dy-review-watermark-image .dy-review-page-watermark,
           .dy-review-watermark-empty .dy-review-page-watermark {
-            width: 40%;
-            opacity: 0.34;
+            width: 46%;
+            opacity: 0.38;
           }
         }
       `}</style>
