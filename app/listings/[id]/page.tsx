@@ -7,7 +7,6 @@ import PrintButton from "@/components/PrintButton";
 import RecentViewedTracker from "@/components/RecentViewedTracker";
 import ConsultationTicker from "@/components/ConsultationTicker";
 import PublicPageFrame from "@/components/PublicPageFrame";
-import BrandWatermark from "@/components/BrandWatermark";
 import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 import { supabase } from "@/lib/supabase";
 import type { PropertyRow } from "@/lib/propertyTypes";
@@ -546,7 +545,15 @@ export default async function PropertyDetailPage({
                           src={item.thumbnail_url!}
                           alt={item.title}
                         />
-                        <BrandWatermark className="dy-related-watermark" />
+
+                        <span className="dy-related-watermark-box">
+                          <img
+                            src="/dy-watermark.png"
+                            alt=""
+                            aria-hidden="true"
+                            draggable={false}
+                          />
+                        </span>
                       </span>
                     ) : (
                       <NoImagePlaceholder />
@@ -638,25 +645,56 @@ export default async function PropertyDetailPage({
           object-fit: cover;
         }
 
-        .dy-related-watermark-wrap .dy-related-watermark {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 34%;
-          max-width: 160px;
-          height: auto;
-          transform: translate(-50%, -50%);
-          object-fit: contain;
-          opacity: 0.30;
-          pointer-events: none;
-          user-select: none;
-          z-index: 4;
+        .dy-related-watermark-box {
+          position: absolute !important;
+          top: 50% !important;
+          left: 50% !important;
+          transform: translate(-50%, -50%) !important;
+
+          width: 250px !important;
+          height: 250px !important;
+
+          max-width: 38% !important;
+          max-height: 60% !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          overflow: visible !important;
+
+          opacity: 0.3 !important;
+
+          pointer-events: none !important;
+          user-select: none !important;
+
+          z-index: 4 !important;
+        }
+
+        .dy-related-watermark-box > img {
+          display: block !important;
+
+          width: 100% !important;
+          height: 100% !important;
+
+          max-width: 100% !important;
+          max-height: 100% !important;
+
+          object-fit: contain !important;
+
+          margin: 0 !important;
+          padding: 0 !important;
         }
 
         @media (max-width: 760px) {
-          .dy-related-watermark-wrap .dy-related-watermark {
-            width: 38%;
-            opacity: 0.34;
+          .dy-related-watermark-box {
+            width: 120px !important;
+            height: 120px !important;
+
+            max-width: 26% !important;
+            max-height: 42% !important;
+
+            opacity: 0.34 !important;
           }
         }
       `}</style>
