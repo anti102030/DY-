@@ -1174,8 +1174,8 @@ export default async function ReviewDetailPage({
           top: 50% !important;
           left: 50% !important;
 
-          width: 42% !important;
-          max-width: 230px !important;
+          width: 48% !important;
+          max-width: 250px !important;
           height: auto !important;
           aspect-ratio: auto !important;
 
@@ -1183,7 +1183,7 @@ export default async function ReviewDetailPage({
           object-fit: contain !important;
 
           background: transparent !important;
-          opacity: 0.34 !important;
+          opacity: 0.52 !important;
 
           pointer-events: none !important;
           user-select: none !important;
@@ -1198,12 +1198,12 @@ export default async function ReviewDetailPage({
           }
 
           .dy-review-related-watermark-wrap .dy-review-related-watermark {
-            width: 46% !important;
-            max-width: 230px !important;
+            width: 52% !important;
+            max-width: 250px !important;
             height: auto !important;
             aspect-ratio: auto !important;
             background: transparent !important;
-            opacity: 0.38 !important;
+            opacity: 0.56 !important;
           }
         }
       `}</style>
