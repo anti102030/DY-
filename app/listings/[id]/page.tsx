@@ -6,6 +6,7 @@ import DetailConsultForm from "@/components/DetailConsultForm";
 import PrintButton from "@/components/PrintButton";
 import RecentViewedTracker from "@/components/RecentViewedTracker";
 import ConsultationTicker from "@/components/ConsultationTicker";
+import LiveDateTime from "@/components/LiveDateTime";
 import PublicPageFrame from "@/components/PublicPageFrame";
 import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 import { supabase } from "@/lib/supabase";
@@ -67,22 +68,6 @@ function formatDate(value?: string) {
     .replace(".", "");
 }
 
-function formatDateTime(value?: string | null) {
-  if (!value) return "-";
-
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  })
-    .format(new Date(value))
-    .replaceAll(". ", "-")
-    .replace(".", "");
-}
 
 function maskPhone(value?: string | null) {
   if (!value) return "010-XXXX-XXXX";
@@ -231,11 +216,6 @@ export default async function PropertyDetailPage({
 
   const confirmedDate = formatDate(property.created_at);
 
-  const liveDate =
-    recentConsultations.length > 0
-      ? formatDateTime(recentConsultations[0].created_at)
-      : confirmedDate;
-
   const addressText = [property.city, property.district, property.neighborhood]
     .filter(Boolean)
     .join(" ");
@@ -371,7 +351,7 @@ export default async function PropertyDetailPage({
               <div className="dy-km-live-box">
                 <span className="dy-km-live-badge">LIVE</span>
 
-                <b className="dy-km-confirmed-text">{liveDate} 기준</b>
+                <b className="dy-km-confirmed-text"><LiveDateTime /> 기준</b>
 
                 <strong className="dy-km-completed-count">
                   <span className="dy-km-completed-number">
