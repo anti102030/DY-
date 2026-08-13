@@ -1150,12 +1150,12 @@ export default async function ReviewDetailPage({
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 32%;
-          max-width: 220px;
+          width: 250px;
+          max-width: 42%;
           height: auto;
           transform: translate(-50%, -50%);
           object-fit: contain;
-          opacity: 0.30;
+          opacity: 0.34;
           pointer-events: none;
           user-select: none;
           z-index: 4;
@@ -1190,8 +1190,9 @@ export default async function ReviewDetailPage({
 
         @media (max-width: 760px) {
           .dy-review-detail-watermark-wrap .dy-review-detail-watermark {
-            width: 36%;
-            opacity: 0.34;
+            width: 200px;
+            max-width: 46%;
+            opacity: 0.38;
           }
         }
       `}</style>
