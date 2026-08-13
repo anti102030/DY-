@@ -252,7 +252,7 @@ export default async function ReviewsPage({
 
               <div className="dy-featured-review-card dy-fixed-promo-card">
                 <img
-                  src="/best-review-tv.png"
+                  src="/best-review-tv-cropped.png"
                   alt="베스트후기 및 입주자 추첨 75인치 삼성 4K TV 증정"
                 />
               </div>
