@@ -10,7 +10,6 @@ function formatKoreaDateTime(date: Date) {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
     hour12: false,
   }).formatToParts(date);
 
@@ -18,7 +17,7 @@ function formatKoreaDateTime(date: Date) {
     parts.map((part) => [part.type, part.value])
   );
 
-  return `${values.year}-${values.month}-${values.day} ${values.hour}:${values.minute}:${values.second}`;
+  return `${values.year}-${values.month}-${values.day} ${values.hour}:${values.minute}`;
 }
 
 export default function LiveDateTime() {
@@ -28,13 +27,25 @@ export default function LiveDateTime() {
     const updateNow = () => setNow(new Date());
 
     updateNow();
-    const timer = window.setInterval(updateNow, 1000);
 
-    return () => window.clearInterval(timer);
+    const delay = (60 - new Date().getSeconds()) * 1000;
+    let interval: number | undefined;
+
+    const timeout = window.setTimeout(() => {
+      updateNow();
+      interval = window.setInterval(updateNow, 60_000);
+    }, delay);
+
+    return () => {
+      window.clearTimeout(timeout);
+      if (interval !== undefined) {
+        window.clearInterval(interval);
+      }
+    };
   }, []);
 
   if (!now) {
-    return <span suppressHydrationWarning>---- -- -- --:--:--</span>;
+    return <span suppressHydrationWarning>---- -- -- --:--</span>;
   }
 
   return <span suppressHydrationWarning>{formatKoreaDateTime(now)}</span>;
