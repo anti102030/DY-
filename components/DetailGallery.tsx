@@ -163,27 +163,25 @@ export default function DetailGallery({ images, title }: Props) {
           overflow: hidden;
         }
 
-        /* 상세페이지 메인 사진 기준점 */
         .dy-detail-image-wrap {
           position: relative;
           overflow: hidden;
         }
 
-        /* 상세페이지 메인 워터마크 */
+        /* 상세페이지 메인사진 워터마크 */
         :global(.dy-detail-photo-watermark) {
           position: absolute;
           top: 50%;
           left: 50%;
 
-          width: 28%;
-          max-width: 240px;
+          width: 18%;
+          max-width: 150px;
           height: auto;
 
           transform: translate(-50%, -50%);
-
           object-fit: contain;
 
-          opacity: 0.38;
+          opacity: 0.3;
 
           pointer-events: none;
           user-select: none;
@@ -191,42 +189,36 @@ export default function DetailGallery({ images, title }: Props) {
           z-index: 7;
         }
 
-        /* 확대 이미지 영역 */
         .dy-gallery-modal-image-wrap {
           position: relative;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           max-width: 90vw;
           max-height: 90vh;
         }
 
         .dy-gallery-modal-image-wrap > img {
           display: block;
-
           max-width: 90vw;
           max-height: 90vh;
-
           object-fit: contain;
         }
 
-        /* 확대했을 때 워터마크 */
+        /* 사진 클릭해서 확대했을 때 워터마크 */
         .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
           position: absolute;
           top: 50%;
           left: 50%;
 
-          width: 28%;
-          max-width: 300px;
+          width: 18%;
+          max-width: 170px;
           height: auto;
 
           transform: translate(-50%, -50%);
-
           object-fit: contain;
 
-          opacity: 0.36;
+          opacity: 0.3;
 
           pointer-events: none;
           user-select: none;
@@ -236,15 +228,15 @@ export default function DetailGallery({ images, title }: Props) {
 
         @media (max-width: 760px) {
           :global(.dy-detail-photo-watermark) {
-            width: 32%;
-            max-width: 200px;
-            opacity: 0.4;
+            width: 22%;
+            max-width: 130px;
+            opacity: 0.34;
           }
 
           .dy-gallery-modal-image-wrap :global(.dy-modal-photo-watermark) {
-            width: 32%;
-            max-width: 220px;
-            opacity: 0.38;
+            width: 22%;
+            max-width: 150px;
+            opacity: 0.34;
           }
         }
       `}</style>
