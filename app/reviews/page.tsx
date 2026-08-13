@@ -586,7 +586,7 @@ export default async function ReviewsPage({
 
         .dy-review-watermark-image > img {
           width: 100%;
-          aspect-ratio: 1 / 1;
+          height: 100%;
           display: block;
           object-fit: cover;
           background: #f3f3f3;
@@ -827,10 +827,14 @@ export default async function ReviewsPage({
           overflow: hidden;
         }
 
+        .dy-review-watermark-image {
+          aspect-ratio: 1 / 1;
+        }
+
         .dy-review-watermark-image > img {
           display: block;
           width: 100%;
-          aspect-ratio: 1 / 1;
+          height: 100%;
           object-fit: cover;
           background: #f3f3f3;
         }
@@ -847,7 +851,7 @@ export default async function ReviewsPage({
         .dy-review-watermark-image .dy-review-page-watermark,
         .dy-review-watermark-empty .dy-review-page-watermark {
           position: absolute;
-          top: 50%;
+          top: 45%;
           left: 50%;
           width: 48% !important;
           max-width: 250px !important;
