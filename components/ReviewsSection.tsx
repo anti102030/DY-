@@ -344,7 +344,7 @@ export default function ReviewsSection() {
           transform: translate(-50%, -50%);
           object-fit: contain;
 
-          opacity: 0.32;
+          opacity: 0.52;
 
           pointer-events: none;
           user-select: none;
@@ -444,6 +444,7 @@ export default function ReviewsSection() {
           .dy26-review-image-wrap .dy26-review-watermark {
             width: 60% !important;
             max-width: 320px !important;
+            opacity: 0.56 !important;
           }
         }
 
