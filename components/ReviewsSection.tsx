@@ -96,7 +96,7 @@ export default function ReviewsSection() {
         created_at: new Date().toISOString(),
         is_best: false,
       })),
-    [],
+    []
   );
 
   const sourceItems =
@@ -113,7 +113,7 @@ export default function ReviewsSection() {
       ...sourceItems,
       ...sourceItems.slice(
         0,
-        isMobile ? 1 : VISIBLE_COUNT,
+        isMobile ? 1 : VISIBLE_COUNT
       ),
     ];
   }, [canSlide, isMobile, sourceItems]);
@@ -124,7 +124,6 @@ export default function ReviewsSection() {
     setIsAnimating(true);
     setCurrentIndex((current) => current + 1);
   }, [canSlide, isAnimating]);
-
 
   function handleTransitionEnd() {
     if (!canSlide) return;
@@ -179,10 +178,9 @@ export default function ReviewsSection() {
               transform: isMobile
                 ? `translateX(-${currentIndex * 100}%)`
                 : `translateX(calc(-${currentIndex} * (((100% - 48px) / 5) + 12px)))`,
-              transition:
-                isAnimating
-                  ? `transform ${TRANSITION_TIME}ms ease`
-                  : "none",
+              transition: isAnimating
+                ? `transform ${TRANSITION_TIME}ms ease`
+                : "none",
             }}
             onTransitionEnd={handleTransitionEnd}
           >
@@ -231,8 +229,6 @@ export default function ReviewsSection() {
             })}
           </div>
         </div>
-
-
       </div>
 
       <style>{`
@@ -314,10 +310,14 @@ export default function ReviewsSection() {
           text-decoration: none;
         }
 
+        /*
+         * PC 고객후기 이미지 높이
+         * 아래 분양정보 매물 이미지와 비슷하게 맞춤
+         */
         .dy26-review-image-wrap {
           position: relative;
           width: 100%;
-          height: 162px;
+          height: 132px;
           overflow: hidden;
           background: #111;
         }
@@ -334,14 +334,20 @@ export default function ReviewsSection() {
         .dy26-review-image-wrap .dy26-review-watermark {
           position: absolute;
           top: 50%;
-          left: 50%;          width: 42%;
+          left: 50%;
+
+          width: 42%;
           max-width: 220px;
           height: auto;
+
           transform: translate(-50%, -50%);
           object-fit: contain;
+
           opacity: 0.32;
+
           pointer-events: none;
           user-select: none;
+
           z-index: 2;
         }
 
@@ -349,10 +355,13 @@ export default function ReviewsSection() {
           transform: scale(1.03);
         }
 
-
+        /*
+         * 태블릿에서도 높이를 따로 키우지 않고
+         * PC와 같은 132px 유지
+         */
         @media (max-width: 1100px) and (min-width: 761px) {
-          .dy26-review-card img {
-            height: 145px;
+          .dy26-review-image-wrap {
+            height: 132px;
           }
         }
 
@@ -430,7 +439,6 @@ export default function ReviewsSection() {
             width: 60% !important;
             max-width: 320px !important;
           }
-
         }
 
         @media (max-width: 430px) {
