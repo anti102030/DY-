@@ -508,7 +508,7 @@ export default async function ReviewsPage({
 
         .dy-fixed-promo-card img {
           width: 100%;
-          height: 255px;
+          height: 313px;
           display: block;
           object-fit: cover;
         }
