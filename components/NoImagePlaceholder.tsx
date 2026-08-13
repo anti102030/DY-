@@ -42,8 +42,8 @@ export default function NoImagePlaceholder({
           width: 250px !important;
           height: 250px !important;
 
-          max-width: 28% !important;
-          max-height: 50% !important;
+          max-width: 38% !important;
+          max-height: 60% !important;
 
           display: flex !important;
           align-items: center !important;

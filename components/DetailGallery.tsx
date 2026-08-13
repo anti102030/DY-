@@ -12,7 +12,6 @@ function isRealImage(image: string) {
   const value = image.trim();
 
   if (!value) return false;
-
   if (value.startsWith("data:image/svg+xml")) return false;
 
   return true;
@@ -191,8 +190,8 @@ export default function DetailGallery({ images, title }: Props) {
           width: 250px !important;
           height: 250px !important;
 
-          max-width: 28% !important;
-          max-height: 50% !important;
+          max-width: 38% !important;
+          max-height: 60% !important;
 
           display: flex !important;
           align-items: center !important;
@@ -236,10 +235,8 @@ export default function DetailGallery({ images, title }: Props) {
 
         .dy-gallery-modal-image-wrap > img {
           display: block;
-
           max-width: 90vw;
           max-height: 90vh;
-
           object-fit: contain;
         }
 
@@ -253,8 +250,8 @@ export default function DetailGallery({ images, title }: Props) {
           width: 250px !important;
           height: 250px !important;
 
-          max-width: 26% !important;
-          max-height: 50% !important;
+          max-width: 38% !important;
+          max-height: 60% !important;
 
           display: flex !important;
           align-items: center !important;
