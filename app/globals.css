@@ -12591,4 +12591,14 @@ body .km-detail-bottom-buttons {
     display: block !important;
   }
 }
+/* 오른쪽 사이드바 종 카드 ↔ 안전한 내 집 구하기 간격 복구 */
+@media screen and (min-width: 821px) {
+  body .km-home-right-column .dy-quick-consult-button,
+  body .km-home-right-column button:has(.dy-quick-consult-card) {
+    margin-bottom: 14px !important;
+  }
 
+  body .km-home-right-column .dy-safe-home {
+    margin-top: 0 !important;
+  }
+}
