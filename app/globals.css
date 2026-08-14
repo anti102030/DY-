@@ -12511,3 +12511,84 @@ body .km-detail-bottom-buttons {
   body .km-related-item { grid-template-columns:105px minmax(0,1fr) !important; }
   body .km-related-thumb { width:105px !important; min-width:105px !important; height:90px !important; }
 }
+
+/* =========================================================
+   2026-08-14 메인 PC 3단 레이아웃 복구
+   모바일(820px 이하)은 기존 반응형 규칙 그대로 사용
+   ========================================================= */
+@media screen and (min-width: 821px) {
+  body .km-home-layout {
+    width: 1240px !important;
+    min-width: 1240px !important;
+    max-width: none !important;
+    margin: 18px auto 70px !important;
+    padding: 0 !important;
+
+    display: grid !important;
+    grid-template-columns: 230px minmax(0, 1fr) 180px !important;
+    column-gap: 15px !important;
+    align-items: start !important;
+  }
+
+  body .km-home-left-column,
+  body .km-home-center-column,
+  body .km-home-right-column {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  body .km-home-left-column {
+    width: 230px !important;
+    display: block !important;
+  }
+
+  body .km-home-center-column {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  body .km-home-right-column {
+    width: 180px !important;
+    display: block !important;
+  }
+
+  body .km-home-left-column > *,
+  body .km-home-right-column > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .km-home-search-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  body .km-home-review-row {
+    width: 1240px !important;
+    min-width: 1240px !important;
+    max-width: none !important;
+    margin: 20px auto 15px !important;
+    padding: 0 !important;
+
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 180px !important;
+    column-gap: 15px !important;
+    align-items: start !important;
+  }
+
+  body .km-home-review-content {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  body .km-home-quick-consult {
+    width: 180px !important;
+    display: block !important;
+  }
+}
+
