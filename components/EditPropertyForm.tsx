@@ -234,6 +234,7 @@ export default function EditPropertyForm({
 
       const response = await fetch(`/api/admin/properties/${property.id}`, {
         method: "PATCH",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
         },
@@ -284,7 +285,7 @@ export default function EditPropertyForm({
       await deleteRemovedStorageImages(finalImages);
 
       setMessage("매물이 수정되었습니다.");
-      router.push("/admin");
+      router.replace("/admin/properties");
       router.refresh();
     } catch (error) {
       const errorMessage =
