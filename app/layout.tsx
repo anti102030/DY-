@@ -5,6 +5,11 @@ import "./km-home.css";
 export const metadata: Metadata = {
   title: "DY다이아부동산",
   description: "서울·경기·인천 수도권 부동산 매물",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
