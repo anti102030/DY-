@@ -88,9 +88,9 @@ export default function RightSidebar() {
         style={{
           display: "block",
           width: "100%",
-          height: "14px",
-          minHeight: "14px",
-          flex: "0 0 14px",
+          height: "22px",
+          minHeight: "22px",
+          flex: "0 0 22px",
           pointerEvents: "none",
         }}
       />
