@@ -3,6 +3,8 @@ import "./globals.css";
 import "./km-home.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dy-home-wuig.vercel.app"),
+
   title: "DY다이아부동산",
   description: "서울·경기·인천 수도권 부동산 매물",
 
@@ -15,11 +17,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DY다이아부동산",
     description: "서울·경기·인천 수도권 부동산 매물",
+    url: "https://dy-home-wuig.vercel.app",
+    siteName: "DY다이아부동산",
+    type: "website",
+    locale: "ko_KR",
     images: [
       {
         url: "/dy-og.png",
-        width: 600,
-        height: 600,
+        width: 1200,
+        height: 630,
         alt: "DY다이아부동산",
       },
     ],
