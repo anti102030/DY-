@@ -36,17 +36,41 @@ function GuideIconImage({ type }: { type: GuideIcon }) {
 }
 
 const depositLinks = [
-  { label: "무입주금", href: "/?deposit=0" },
-  { label: "1000만원 미만", href: "/?deposit_max=1000" },
-  { label: "3000만원 미만", href: "/?deposit_max=3000" },
-  { label: "5000만원 미만", href: "/?deposit_max=5000" },
+  {
+    label: "무입주금",
+    href: "/?deposit=0",
+  },
+  {
+    label: "1000만원 미만",
+    href: "/?deposit_max=1000",
+  },
+  {
+    label: "3000만원 미만",
+    href: "/?deposit_max=3000",
+  },
+  {
+    label: "5000만원 미만",
+    href: "/?deposit_max=5000",
+  },
 ];
 
 const typeLinks = [
-  { label: "원 · 투룸", href: "/?rooms_group=1-2" },
-  { label: "쓰리 · 포룸", href: "/?rooms_group=3-4" },
-  { label: "테라스 · 복층", href: "/?feature=테라스복층" },
-  { label: "타운하우스", href: "/?property_type=타운하우스" },
+  {
+    label: "원 · 투룸",
+    href: "/?rooms_group=1-2",
+  },
+  {
+    label: "쓰리 · 포룸",
+    href: "/?rooms_group=3-4",
+  },
+  {
+    label: "테라스 · 복층",
+    href: "/?feature=테라스복층",
+  },
+  {
+    label: "타운하우스",
+    href: "/?property_type=타운하우스",
+  },
 ];
 
 export default function RightSidebar() {
@@ -58,10 +82,20 @@ export default function RightSidebar() {
 
   return (
     <aside className="km-right-sidebar" id="top">
-      <section
-        className="km-safe-box"
-        style={{ marginTop: "14px" }}
-      >
+      {/* 급매물상담신청 카드와 안전한 내 집 구하기 사이 실제 여백 */}
+      <div
+        aria-hidden="true"
+        style={{
+          display: "block",
+          width: "100%",
+          height: "14px",
+          minHeight: "14px",
+          flex: "0 0 14px",
+          pointerEvents: "none",
+        }}
+      />
+
+      <section className="km-safe-box">
         <div className="km-safe-head">
           <h2>안전한 내 집 구하기!</h2>
 
@@ -78,7 +112,10 @@ export default function RightSidebar() {
               role="link"
               tabIndex={0}
               onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
+                if (
+                  event.key === "Enter" ||
+                  event.key === " "
+                ) {
                   event.preventDefault();
                   goToVillaTour();
                 }
@@ -88,6 +125,7 @@ export default function RightSidebar() {
               <span>
                 <GuideIconImage type={icon} />
               </span>
+
               <strong>{text}</strong>
             </div>
           ))}
@@ -102,6 +140,7 @@ export default function RightSidebar() {
             name="memo"
             placeholder="상담내용을 적어주세요 확인 후 빠른 답변 드리도록 하겠습니다"
           />
+
           <input name="phone" placeholder="연락처" />
 
           <div className="km-captcha-row">
@@ -134,6 +173,7 @@ export default function RightSidebar() {
 
       <section className="km-side-menu-box">
         <h2>입주금별 정보</h2>
+
         <div>
           {depositLinks.map((item) => (
             <Link key={item.label} href={item.href}>
@@ -145,6 +185,7 @@ export default function RightSidebar() {
 
       <section className="km-side-menu-box">
         <h2>매물종류</h2>
+
         <div>
           {typeLinks.map((item) => (
             <Link key={item.label} href={item.href}>
